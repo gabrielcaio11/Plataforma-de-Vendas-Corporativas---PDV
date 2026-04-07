@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.security;
 
+import br.com.gabrielcaio.pdv.controller.error.EntityExistsException;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
 import br.com.gabrielcaio.pdv.repository.UserRepository;
@@ -39,7 +40,7 @@ public class AuthService {
 
   public String register(String name, String email, String password) {
     if (userRepository.findByEmail(email).isPresent()) {
-      throw new IllegalArgumentException("Email já registrado");
+      throw new EntityExistsException("Email já registrado");
     }
 
     User user = new User();

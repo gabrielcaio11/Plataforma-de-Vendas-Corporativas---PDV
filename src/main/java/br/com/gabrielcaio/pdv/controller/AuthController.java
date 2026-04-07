@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.controller;
 
+import br.com.gabrielcaio.pdv.controller.request.AuthResponse;
 import br.com.gabrielcaio.pdv.controller.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.security.AuthService;
@@ -16,12 +17,14 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public String login(@RequestBody LoginRequest request) {
-    return authService.login(request.email(), request.password());
+  public AuthResponse login(@RequestBody LoginRequest request) {
+    String token = authService.login(request.email(), request.password());
+    return new AuthResponse(token);
   }
   @PostMapping("/register")
-  public String register(@RequestBody RegisterRequest request) {
-    return authService.register(request.name(), request.email(), request.password());
+  public AuthResponse register(@RequestBody RegisterRequest request) {
+    String token = authService.register(request.name(), request.email(), request.password());
+    return new AuthResponse(token);
   }
 
 
