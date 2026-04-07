@@ -1,3 +1,16 @@
 spring:
   application:
     name: pdv
+  datasource:
+    url: jdbc:postgresql://localhost:5432/seu_banco
+    username: seu_username
+    password: sua_senha
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
