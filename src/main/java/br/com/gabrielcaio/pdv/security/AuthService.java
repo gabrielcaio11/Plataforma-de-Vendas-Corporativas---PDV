@@ -6,10 +6,11 @@ import br.com.gabrielcaio.pdv.controller.error.EntityExistsException;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
-import br.com.gabrielcaio.pdv.repository.UserRepository;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
+import br.com.gabrielcaio.pdv.repository.UserRepository;
 import java.util.Optional;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,21 +59,18 @@ public class AuthService {
     user.setPassword(passwordEncoder.encode(request.password()));
     user.setRole(role);
 
-    if(role == UserRole.COLLABORATOR) {
-        if(request.company_id() == null) {
-          throw new BusinessException("Colaboradores devem pertencer a uma empresa");
+    if (role == UserRole.COLLABORATOR) {
+      if (request.company_id() == null) {
+        throw new BusinessException("Colaboradores devem pertencer a uma empresa");
+      } else {
+        Optional<Company> company = companyRepository.findById(request.company_id());
+        if (company.isEmpty()) {
+          throw new BusinessException("Empresa não encontrada");
+        } else {
+          user.setCompany(company.get());
         }
-        else {
-          Optional<Company> company = companyRepository.findById(request.company_id());
-          if(company.isEmpty()) {
-            throw new BusinessException("Empresa não encontrada");
-          }
-          else {
-            user.setCompany(company.get());
-          }
-        }
+      }
     }
-
 
     userRepository.save(user);
 

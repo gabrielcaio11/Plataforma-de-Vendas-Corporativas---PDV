@@ -28,6 +28,7 @@ public class TransactionService {
     this.productRepository = productRepository;
     this.transactionRepository = transactionRepository;
   }
+
   public TransactionResponse create(TransactionRequest request) {
 
     // 1. Usuário autenticado
@@ -37,7 +38,7 @@ public class TransactionService {
 
     // 2. Produto do banco
     Product product = productRepository.findById(request.productId())
-        .orElseThrow(()-> new ResourceNotFoundException("Produto não encontrado"));
+        .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
     // 3. Criar transação
     Transaction transaction = new Transaction();
@@ -51,7 +52,8 @@ public class TransactionService {
     Transaction savedTransaction = transactionRepository.save(transaction);
 
     // 5. Retornar resposta
-    BigDecimal totalPrice = savedTransaction.getPriceAtPurchase().multiply(new BigDecimal(savedTransaction.getQuantity()));
+    BigDecimal totalPrice = savedTransaction.getPriceAtPurchase()
+        .multiply(new BigDecimal(savedTransaction.getQuantity()));
     return new TransactionResponse(
         savedTransaction.getId(),
         savedTransaction.getProduct().getName(),

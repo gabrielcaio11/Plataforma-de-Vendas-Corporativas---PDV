@@ -1,6 +1,7 @@
 # Plataforma de Vendas Corporativas (Backend)
 
-API RESTful desenvolvida para gerenciamento de um marketplace corporativo, permitindo que empresas cadastrem produtos e usuários realizem compras em um único ambiente.
+API RESTful desenvolvida para gerenciamento de um marketplace corporativo, permitindo que empresas
+cadastrem produtos e usuários realizem compras em um único ambiente.
 
 ---
 

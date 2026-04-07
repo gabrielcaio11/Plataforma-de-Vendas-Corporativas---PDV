@@ -2,6 +2,7 @@ package br.com.gabrielcaio.pdv.controller.error;
 
 
 public class FieldMessage {
+
   private String fieldName;
   private String message;
 

@@ -1,9 +1,8 @@
 package br.com.gabrielcaio.pdv.service;
 
-import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
-import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
-import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
+import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
@@ -64,7 +63,7 @@ public class ProductService {
       throw new ForbiddenException("Apenas colaboradores podem criar produtos");
     }
 
-    if(!Objects.equals(user.getCompany().getId(), request.company_id())) {
+    if (!Objects.equals(user.getCompany().getId(), request.company_id())) {
       throw new ForbiddenException("Você não pode criar produtos para outra empresa");
     }
 
@@ -83,9 +82,9 @@ public class ProductService {
     return productRepository.findAll().stream()
         .map(
             p -> new ProductDetailsResponse(
-              p.getId(),
-              p.getName(),
-              p.getPrice()
+                p.getId(),
+                p.getName(),
+                p.getPrice()
             )
         )
         .toList();

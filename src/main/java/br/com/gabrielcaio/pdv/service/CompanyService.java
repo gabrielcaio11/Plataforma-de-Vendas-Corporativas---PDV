@@ -27,6 +27,7 @@ public class CompanyService {
         .orElseThrow();
     return new CompanyResponse(company.getId(), company.getName());
   }
+
   public List<CompanyResponse> getAll() {
     List<Company> companies = companyRepository.findAll();
     return companies.stream()

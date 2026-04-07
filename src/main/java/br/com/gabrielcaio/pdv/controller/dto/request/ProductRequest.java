@@ -7,4 +7,6 @@ public record ProductRequest(
     BigDecimal price,
     Integer stock,
     Long company_id
-) {}
+) {
+
+}

@@ -3,6 +3,7 @@ package br.com.gabrielcaio.pdv.controller.error;
 import java.time.Instant;
 
 public class ErrorMessage {
+
   private Instant timestamp;
   private Integer status;
   private String error;
