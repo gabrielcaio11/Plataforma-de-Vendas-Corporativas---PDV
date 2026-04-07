@@ -26,9 +26,4 @@ public class AuthController {
     String token = authService.register(request);
     return new AuthResponse(token);
   }
-
-  @GetMapping("/test")
-  public String test() {
-    return "Hello, World!";
-  }
 }

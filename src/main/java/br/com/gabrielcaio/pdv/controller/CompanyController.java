@@ -3,6 +3,7 @@ package br.com.gabrielcaio.pdv.controller;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.service.CompanyService;
+import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,16 @@ public class CompanyController {
   }
 
   @PostMapping
-  public CompanyResponse createCompany(@RequestBody CreateCompanyRequest request) {
-    return companyService.createCompany(request.name());
+  public CompanyResponse create(@RequestBody CreateCompanyRequest request) {
+    return companyService.create(request.name());
+  }
+  @GetMapping("/{id}")
+  public CompanyResponse getById(@PathVariable Long id) {
+    return companyService.getById(id);
+  }
+
+  @GetMapping
+  public List<CompanyResponse> getAll() {
+    return companyService.getAll();
   }
 }

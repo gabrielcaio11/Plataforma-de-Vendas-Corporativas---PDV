@@ -1,10 +1,13 @@
 package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.service.ProductService;
+import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,6 +40,16 @@ public class ProductController {
   ) {
     Product entity = productService.update(id, request);
     return new ProductResponse(entity.getName(), entity.getPrice());
+  }
+
+  @GetMapping
+  public List<ProductDetailsResponse> getAll() {
+    return productService.getAll();
+  }
+
+  @GetMapping("/{id}")
+  public ProductDetailsResponse getById(@PathVariable Long id) {
+    return productService.getById(id);
   }
 }
 

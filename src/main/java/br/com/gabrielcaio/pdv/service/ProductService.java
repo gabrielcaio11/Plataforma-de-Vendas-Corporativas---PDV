@@ -1,5 +1,7 @@
 package br.com.gabrielcaio.pdv.service;
 
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.domain.Product;
@@ -9,6 +11,7 @@ import br.com.gabrielcaio.pdv.repository.ProductRepository;
 import br.com.gabrielcaio.pdv.repository.UserRepository;
 import br.com.gabrielcaio.pdv.security.AuthorizationService;
 import br.com.gabrielcaio.pdv.security.SecurityUtils;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
 
@@ -74,5 +77,27 @@ public class ProductService {
     companyRepository.save(user.getCompany());
 
     return productRepository.save(product);
+  }
+
+  public List<ProductDetailsResponse> getAll() {
+    return productRepository.findAll().stream()
+        .map(
+            p -> new ProductDetailsResponse(
+              p.getId(),
+              p.getName(),
+              p.getPrice()
+            )
+        )
+        .toList();
+  }
+
+  public ProductDetailsResponse getById(Long id) {
+    Product product = productRepository.findById(id)
+        .orElseThrow();
+    return new ProductDetailsResponse(
+        product.getId(),
+        product.getName(),
+        product.getPrice()
+    );
   }
 }
