@@ -27,5 +27,8 @@ public class AuthController {
     return new AuthResponse(token);
   }
 
-
+  @GetMapping("/test")
+  public String test() {
+    return "Hello, World!";
+  }
 }
