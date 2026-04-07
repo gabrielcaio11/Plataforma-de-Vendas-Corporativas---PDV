@@ -4,6 +4,8 @@ import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.service.TransactionService;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,17 +24,20 @@ public class TransactionController {
   }
 
   @PostMapping
-  public TransactionResponse create(@RequestBody TransactionRequest request) {
-    return transactionService.create(request);
+  public ResponseEntity<TransactionResponse> create(@RequestBody TransactionRequest request) {
+    TransactionResponse response = transactionService.create(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @GetMapping("/{id}")
-  public TransactionResponse getById(@PathVariable Long id) {
-    return transactionService.getById(id);
+  public ResponseEntity<TransactionResponse> getById(@PathVariable Long id) {
+    TransactionResponse response = transactionService.getById(id);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public List<TransactionResponse> getAll() {
-    return transactionService.getAll();
+  public ResponseEntity<List<TransactionResponse>> getAll() {
+    List<TransactionResponse> responses = transactionService.getAll();
+    return ResponseEntity.ok(responses);
   }
 }

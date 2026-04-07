@@ -6,6 +6,8 @@ import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.service.ProductService;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,29 +29,33 @@ public class ProductController {
 
   @PostMapping
   @PreAuthorize("hasRole('COLLABORATOR')")
-  public ProductResponse create(@RequestBody ProductRequest request) {
+  public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request) {
     Product entity = productService.create(request);
-    return new ProductResponse(entity.getName(), entity.getPrice());
+    ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('COLLABORATOR')")
-  public ProductResponse update(
+  public ResponseEntity<ProductResponse> update(
       @PathVariable Long id,
       @RequestBody ProductRequest request
   ) {
     Product entity = productService.update(id, request);
-    return new ProductResponse(entity.getName(), entity.getPrice());
+    ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public List<ProductDetailsResponse> getAll() {
-    return productService.getAll();
+  public ResponseEntity<List<ProductDetailsResponse>> getAll() {
+    List<ProductDetailsResponse> responses = productService.getAll();
+    return ResponseEntity.ok(responses);
   }
 
   @GetMapping("/{id}")
-  public ProductDetailsResponse getById(@PathVariable Long id) {
-    return productService.getById(id);
+  public ResponseEntity<ProductDetailsResponse> getById(@PathVariable Long id) {
+    ProductDetailsResponse response = productService.getById(id);
+    return ResponseEntity.ok(response);
   }
 }
 

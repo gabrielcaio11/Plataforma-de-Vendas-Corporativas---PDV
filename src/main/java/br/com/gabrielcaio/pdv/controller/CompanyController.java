@@ -4,6 +4,8 @@ import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,17 +24,20 @@ public class CompanyController {
   }
 
   @PostMapping
-  public CompanyResponse create(@RequestBody CreateCompanyRequest request) {
-    return companyService.create(request.name());
+  public ResponseEntity<CompanyResponse> create(@RequestBody CreateCompanyRequest request) {
+    CompanyResponse response = companyService.create(request.name());
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @GetMapping("/{id}")
-  public CompanyResponse getById(@PathVariable Long id) {
-    return companyService.getById(id);
+  public ResponseEntity<CompanyResponse> getById(@PathVariable Long id) {
+    CompanyResponse response = companyService.getById(id);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public List<CompanyResponse> getAll() {
-    return companyService.getAll();
+  public ResponseEntity<List<CompanyResponse>> getAll() {
+    List<CompanyResponse> responses = companyService.getAll();
+    return ResponseEntity.ok(responses);
   }
 }
