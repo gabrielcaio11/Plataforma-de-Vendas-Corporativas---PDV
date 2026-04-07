@@ -1,8 +1,8 @@
 package br.com.gabrielcaio.pdv.controller;
 
-import br.com.gabrielcaio.pdv.controller.request.AuthResponse;
-import br.com.gabrielcaio.pdv.controller.request.LoginRequest;
-import br.com.gabrielcaio.pdv.controller.request.RegisterRequest;
+import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
+import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
+import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.security.AuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ public class AuthController {
   }
   @PostMapping("/register")
   public AuthResponse register(@RequestBody RegisterRequest request) {
-    String token = authService.register(request.name(), request.email(), request.password(), request.role());
+    String token = authService.register(request);
     return new AuthResponse(token);
   }
 

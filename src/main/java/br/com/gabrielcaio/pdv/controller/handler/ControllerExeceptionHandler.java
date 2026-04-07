@@ -4,6 +4,7 @@ import br.com.gabrielcaio.pdv.controller.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.error.DataBaseException;
 import br.com.gabrielcaio.pdv.controller.error.EntityExistsException;
 import br.com.gabrielcaio.pdv.controller.error.ErrorMessage;
+import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.controller.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.controller.error.ValidationError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.core.AuthenticationException;
 
 @ControllerAdvice
 public class ControllerExeceptionHandler {
@@ -70,7 +72,7 @@ public class ControllerExeceptionHandler {
     return ResponseEntity.status(status).body(err);
   }
 
-  @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+  @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorMessage> handleAuthenticationException(
       org.springframework.security.core.AuthenticationException e, HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNAUTHORIZED;
@@ -87,6 +89,15 @@ public class ControllerExeceptionHandler {
   public ResponseEntity<ErrorMessage> handleBusinessException(
       BusinessException e, HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+    ErrorMessage err =
+        new ErrorMessage(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+    return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorMessage> handleForbiddenException(
+      ForbiddenException e, HttpServletRequest request) {
+    HttpStatus status = HttpStatus.FORBIDDEN;
     ErrorMessage err =
         new ErrorMessage(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
     return ResponseEntity.status(status).body(err);
