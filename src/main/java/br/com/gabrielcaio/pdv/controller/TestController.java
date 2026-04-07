@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,5 +12,17 @@ public class TestController {
   @GetMapping
   public String test() {
     return "Hello, World!";
+  }
+
+  @GetMapping("/consumer")
+  @PreAuthorize("hasRole('CONSUMER')")
+  public String testConsumer() {
+    return "Acesso permitido para CONSUMER!";
+  }
+
+  @GetMapping("/collaborator")
+  @PreAuthorize("hasRole('COLLABORATOR')")
+  public String testCollaborator() {
+    return "Acesso permitido para COLLABORATOR!";
   }
 }

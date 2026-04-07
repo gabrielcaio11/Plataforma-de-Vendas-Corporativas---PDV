@@ -38,7 +38,7 @@ public class AuthService {
     return jwtService.generateToken(user);
   }
 
-  public String register(String name, String email, String password) {
+  public String register(String name, String email, String password, UserRole role) {
     if (userRepository.findByEmail(email).isPresent()) {
       throw new EntityExistsException("Email já registrado");
     }
@@ -47,7 +47,7 @@ public class AuthService {
     user.setName(name);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(password));
-    user.setRole(UserRole.CONSUMER);
+    user.setRole(role);
 
     userRepository.save(user);
 

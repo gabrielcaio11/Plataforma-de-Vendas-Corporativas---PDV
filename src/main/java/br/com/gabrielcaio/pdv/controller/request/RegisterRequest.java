@@ -1,3 +1,5 @@
 package br.com.gabrielcaio.pdv.controller.request;
 
-public record RegisterRequest(String name, String email, String password) {}
+import br.com.gabrielcaio.pdv.domain.UserRole;
+
+public record RegisterRequest(String name, String email, String password, UserRole role) {}
