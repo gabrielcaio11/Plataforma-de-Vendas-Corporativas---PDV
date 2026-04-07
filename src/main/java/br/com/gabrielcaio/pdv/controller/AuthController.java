@@ -1,6 +1,7 @@
 package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.request.LoginRequest;
+import br.com.gabrielcaio.pdv.controller.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.security.AuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,4 +19,10 @@ public class AuthController {
   public String login(@RequestBody LoginRequest request) {
     return authService.login(request.email(), request.password());
   }
+  @PostMapping("/register")
+  public String register(@RequestBody RegisterRequest request) {
+    return authService.register(request.name(), request.email(), request.password());
+  }
+
+
 }
