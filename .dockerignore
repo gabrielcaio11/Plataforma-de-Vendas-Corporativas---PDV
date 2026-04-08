@@ -1,0 +1,52 @@
+# Build
+target/
+build/
+*.jar
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Runtime
+*.pid
+*.hprof
+
+# Spring profiles locais
+application-local*.yml
+application-test*.yml
+
+# Databases locais
+*.h2.db
+
+# Secrets (mais seguro)
+.env
+.env.local
+.env.*.local
+secrets/
+*.key
+*.pem
+*.p12
+*.jks
+
+# Coverage
+coverage/
+jacoco/
+surefire-reports/
+
+# Git
+.git/
+.gitignore

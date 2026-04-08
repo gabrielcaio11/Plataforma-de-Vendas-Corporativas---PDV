@@ -8,9 +8,9 @@ COPY src ./src
 RUN mvn -B clean package -DskipTests -q
 
 # Etapa 2: Imagem final
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jre-alpine
 
-RUN useradd -m springuser
+RUN adduser -D springuser
 
 WORKDIR /app
 
