@@ -3,6 +3,8 @@ package br.com.gabrielcaio.pdv.controller;
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
 import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -42,6 +44,20 @@ public class CompanyController {
       PageRequestDTO request
   ) {
     Page<CompanyResponse> responses = companyService.getAll(request);
+    return ResponseEntity.ok(responses);
+  }
+
+  @GetMapping("/{companyId}/employees")
+  public ResponseEntity<List<CompanyWithEmployeeResponse>> getEmployeesByCompanyId(
+      @PathVariable Long companyId) {
+    List<CompanyWithEmployeeResponse> responses = companyService.getEmployeesByCompanyId(companyId);
+    return ResponseEntity.ok(responses);
+  }
+
+  @GetMapping("/{companyId}/products")
+  public ResponseEntity<List<CompanyWithProductsResponse>> getProductsByCompanyId(
+      @PathVariable Long companyId) {
+    List<CompanyWithProductsResponse> responses = companyService.getProductsByCompanyId(companyId);
     return ResponseEntity.ok(responses);
   }
 }

@@ -2,6 +2,10 @@ package br.com.gabrielcaio.pdv.service;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.EmployeeResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import java.util.List;
@@ -51,5 +55,25 @@ public class CompanyService {
       throw new IllegalArgumentException("Invalid sort field: " + sort);
     }
     return sort;
+  }
+
+  public List<CompanyWithEmployeeResponse> getEmployeesByCompanyId(Long companyId) {
+    Company company = companyRepository.findById(companyId)
+        .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + companyId));
+    List<EmployeeResponse> employeeResponses = company.getUsers().stream()
+        .map(u -> new EmployeeResponse(u.getId(), u.getName())).toList();
+    return List.of(
+        new CompanyWithEmployeeResponse(company.getId(), company.getName(), employeeResponses));
+  }
+
+  public List<CompanyWithProductsResponse> getProductsByCompanyId(Long companyId) {
+    Company company = companyRepository.findById(companyId)
+        .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + companyId));
+
+    List<ProductResponse> productResponses = company.getProducts().stream()
+        .map(p -> new ProductResponse(p.getName(), p.getPrice()))
+        .toList();
+    return List.of(
+        new CompanyWithProductsResponse(company.getId(), company.getName(), productResponses));
   }
 }
