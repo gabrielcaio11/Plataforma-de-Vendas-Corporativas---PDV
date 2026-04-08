@@ -9,4 +9,6 @@ public record RegisterRequest(
     @NotBlank(message = "Password não pode ser blank") String password,
     @NotBlank(message = "Role não pode ser blank") UserRole role,
     Long company_id
-) {}
+) {
+
+}

@@ -1,9 +1,10 @@
 package br.com.gabrielcaio.pdv.controller;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.service.TransactionService;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +37,10 @@ public class TransactionController {
   }
 
   @GetMapping
-  public ResponseEntity<List<TransactionResponse>> getAll() {
-    List<TransactionResponse> responses = transactionService.getAll();
+  public ResponseEntity<Page<TransactionResponse>> getAll(
+      PageRequestDTO pageRequestDTO
+  ) {
+    Page<TransactionResponse> responses = transactionService.getAll(pageRequestDTO);
     return ResponseEntity.ok(responses);
   }
 }

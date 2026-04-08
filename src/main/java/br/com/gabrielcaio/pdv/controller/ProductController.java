@@ -1,11 +1,12 @@
 package br.com.gabrielcaio.pdv.controller;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.service.ProductService;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,8 +48,10 @@ public class ProductController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ProductDetailsResponse>> getAll() {
-    List<ProductDetailsResponse> responses = productService.getAll();
+  public ResponseEntity<Page<ProductDetailsResponse>> getAll(
+      PageRequestDTO request
+  ) {
+    Page<ProductDetailsResponse> responses = productService.getAll(request);
     return ResponseEntity.ok(responses);
   }
 

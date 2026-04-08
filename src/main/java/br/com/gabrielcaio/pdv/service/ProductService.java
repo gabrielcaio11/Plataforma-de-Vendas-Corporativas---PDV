@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.service;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
@@ -12,6 +13,10 @@ import br.com.gabrielcaio.pdv.security.AuthorizationService;
 import br.com.gabrielcaio.pdv.security.SecurityUtils;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -78,16 +83,24 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public List<ProductDetailsResponse> getAll() {
-    return productRepository.findAll().stream()
-        .map(
-            p -> new ProductDetailsResponse(
-                p.getId(),
-                p.getName(),
-                p.getPrice()
-            )
-        )
-        .toList();
+  public Page<ProductDetailsResponse> getAll(PageRequestDTO request) {
+
+    Sort.Direction dir = request.direction().equalsIgnoreCase("desc")
+        ? Sort.Direction.DESC
+        : Sort.Direction.ASC;
+
+    Pageable pageable = PageRequest.of(
+        request.page(),
+        request.size(),
+        Sort.by(dir, validateSort(request.sort()))
+    );
+    Page<Product> products = productRepository.findAll(pageable);
+
+    return products.map(p -> new ProductDetailsResponse(
+        p.getId(),
+        p.getName(),
+        p.getPrice()
+    ));
   }
 
   public ProductDetailsResponse getById(Long id) {
@@ -98,5 +111,13 @@ public class ProductService {
         product.getName(),
         product.getPrice()
     );
+  }
+
+  private String validateSort(String sort) {
+    List<String> ALLOWED_SORTS = List.of("name", "price", "stock");
+    if (!ALLOWED_SORTS.contains(sort)) {
+      throw new IllegalArgumentException("Invalid sort field: " + sort);
+    }
+    return sort;
   }
 }

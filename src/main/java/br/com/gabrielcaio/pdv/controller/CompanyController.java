@@ -1,9 +1,11 @@
 package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +38,10 @@ public class CompanyController {
   }
 
   @GetMapping
-  public ResponseEntity<List<CompanyResponse>> getAll() {
-    List<CompanyResponse> responses = companyService.getAll();
+  public ResponseEntity<Page<CompanyResponse>> getAll(
+      PageRequestDTO request
+  ) {
+    Page<CompanyResponse> responses = companyService.getAll(request);
     return ResponseEntity.ok(responses);
   }
 }

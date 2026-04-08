@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.service;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.controller.error.ResourceNotFoundException;
@@ -13,6 +14,10 @@ import br.com.gabrielcaio.pdv.security.SecurityUtils;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -73,16 +78,33 @@ public class TransactionService {
     );
   }
 
-  public List<TransactionResponse> getAll() {
+  public Page<TransactionResponse> getAll(PageRequestDTO request) {
 
-    List<Transaction> transactions = transactionRepository.findAll();
-    return transactions.stream()
-        .map(t -> new TransactionResponse(
-            t.getId(),
-            t.getProduct().getName(),
-            t.getQuantity(),
-            t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))
-        ))
-        .toList();
+    Sort.Direction dir = request.direction().equalsIgnoreCase("desc")
+        ? Sort.Direction.DESC
+        : Sort.Direction.ASC;
+
+    Pageable pageable = PageRequest.of(
+        request.page(),
+        request.size(),
+        Sort.by(dir, validateSort(request.sort()))
+    );
+
+    Page<Transaction> transactions = transactionRepository.findAll(pageable);
+
+    return transactions.map(t -> new TransactionResponse(
+        t.getId(),
+        t.getProduct().getName(),
+        t.getQuantity(),
+        t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))
+    ));
+  }
+
+  private String validateSort(String sort) {
+    List<String> ALLOWED_SORTS = List.of("quantity", "priceAtPurchase", "createdAt");
+    if (!ALLOWED_SORTS.contains(sort)) {
+      throw new IllegalArgumentException("Invalid sort field: " + sort);
+    }
+    return sort;
   }
 }
