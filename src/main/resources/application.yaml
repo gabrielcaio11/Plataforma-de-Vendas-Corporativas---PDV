@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
   application:
     name: pdv
   datasource:
@@ -6,6 +8,7 @@ spring:
     username: postgres
     password: 1981fla*
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,3 +19,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:mysecretkey}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+springdoc:
+  api-docs:
+    path: ${SPRINGDOC_API_DOCS_PATH:/v3/api-docs}
+  swagger-ui:
+    path: ${SPRINGDOC_SWAGGER_UI_PATH:/swagger-ui.html}
