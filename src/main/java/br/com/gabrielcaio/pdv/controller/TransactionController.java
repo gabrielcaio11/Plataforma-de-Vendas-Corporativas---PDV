@@ -43,4 +43,11 @@ public class TransactionController {
     Page<TransactionResponse> responses = transactionService.getAll(pageRequestDTO);
     return ResponseEntity.ok(responses);
   }
+  @GetMapping("/me")
+  public ResponseEntity<Page<TransactionResponse>> getAllMe(
+      PageRequestDTO pageRequestDTO
+  ) {
+    Page<TransactionResponse> responses = transactionService.getAllMe(pageRequestDTO);
+    return ResponseEntity.ok(responses);
+  }
 }

@@ -101,10 +101,36 @@ public class TransactionService {
   }
 
   private String validateSort(String sort) {
+
     List<String> ALLOWED_SORTS = List.of("quantity", "priceAtPurchase", "createdAt");
     if (!ALLOWED_SORTS.contains(sort)) {
       throw new IllegalArgumentException("Invalid sort field: " + sort);
     }
     return sort;
+  }
+
+  public Page<TransactionResponse> getAllMe(PageRequestDTO pageRequestDTO) {
+    String email = SecurityUtils.getLoggedUserEmail();
+    User user = userRepository.findByEmail(email)
+        .orElseThrow();
+
+    Sort.Direction dir = pageRequestDTO.direction().equalsIgnoreCase("desc")
+        ? Sort.Direction.DESC
+        : Sort.Direction.ASC;
+
+    Pageable pageable = PageRequest.of(
+        pageRequestDTO.page(),
+        pageRequestDTO.size(),
+        Sort.by(dir, validateSort(pageRequestDTO.sort()))
+    );
+
+    Page<Transaction> transactions = transactionRepository.findByUserId(user.getId(), pageable);
+
+    return transactions.map(t -> new TransactionResponse(
+        t.getId(),
+        t.getProduct().getName(),
+        t.getQuantity(),
+        t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))
+    ));
   }
 }
