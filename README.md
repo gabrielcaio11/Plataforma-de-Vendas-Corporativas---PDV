@@ -61,7 +61,7 @@ A aplicação segue os princípios de:
 
 #### Regras importantes:
 
-* Um co só pode modificar produtos da sua própria empresa
+* Um consumer só pode modificar produtos da sua própria empresa
 * Produtos pertencem obrigatoriamente a uma empresa
 
 ---
