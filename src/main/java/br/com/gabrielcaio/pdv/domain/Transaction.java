@@ -39,11 +39,15 @@ public class Transaction {
   @Column(nullable = false)
   private LocalDateTime createdAt;
 
-  public Transaction() {
-  }
+  public Transaction() {}
 
-  public Transaction(Long id, User user, Product product, BigDecimal priceAtPurchase,
-      Integer quantity, LocalDateTime createdAt) {
+  public Transaction(
+      Long id,
+      User user,
+      Product product,
+      BigDecimal priceAtPurchase,
+      Integer quantity,
+      LocalDateTime createdAt) {
     this.id = id;
     this.user = user;
     this.product = product;

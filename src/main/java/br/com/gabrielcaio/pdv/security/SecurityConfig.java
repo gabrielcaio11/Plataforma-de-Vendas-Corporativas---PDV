@@ -20,28 +20,24 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtFilter;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-  public SecurityConfig(JwtAuthenticationFilter jwtFilter,
-      CustomAuthenticationEntryPoint authenticationEntryPoint) {
+  public SecurityConfig(
+      JwtAuthenticationFilter jwtFilter, CustomAuthenticationEntryPoint authenticationEntryPoint) {
     this.jwtFilter = jwtFilter;
     this.authenticationEntryPoint = authenticationEntryPoint;
   }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-        .csrf(AbstractHttpConfigurer::disable)
+    return http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/auth/**",
-                "/v3/api-docs/**",
-                "/swagger-ui/**",
-                "/swagger-ui.html"
-            )
-            .permitAll()
-            .anyRequest().authenticated()
-        )
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        "/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
