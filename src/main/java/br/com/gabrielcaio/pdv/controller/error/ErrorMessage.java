@@ -9,8 +9,7 @@ public class ErrorMessage {
   private String error;
   private String path;
 
-  public ErrorMessage() {
-  }
+  public ErrorMessage() {}
 
   public ErrorMessage(Instant timestamp, Integer status, String error, String path) {
     this.timestamp = timestamp;

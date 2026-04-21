@@ -34,11 +34,10 @@ public class Product {
   @JoinColumn(name = "company_id")
   private Company company;
 
-  public Product() {
-  }
+  public Product() {}
 
-  public Product(Long id, String name, String description, BigDecimal price, Integer stock,
-      Company company) {
+  public Product(
+      Long id, String name, String description, BigDecimal price, Integer stock, Company company) {
     this.id = id;
     this.name = name;
     this.description = description;

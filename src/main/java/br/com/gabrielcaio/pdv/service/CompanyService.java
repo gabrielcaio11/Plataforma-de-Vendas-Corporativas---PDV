@@ -41,8 +41,8 @@ public class CompanyService {
     Sort.Direction dir =
         request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-    Pageable pageable = PageRequest.of(request.page(), request.size(),
-        Sort.by(dir, validateSort(request.sort())));
+    Pageable pageable =
+        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
 
     Page<Company> companies = companyRepository.findAll(pageable);
     return companies.map(c -> new CompanyResponse(c.getId(), c.getName()));
@@ -50,29 +50,36 @@ public class CompanyService {
 
   private String validateSort(String sort) {
 
-    List<String> ALLOWED_SORTS = List.of("name");
-    if (!ALLOWED_SORTS.contains(sort)) {
+    List<String> allowedSorts = List.of("name");
+    if (!allowedSorts.contains(sort)) {
       throw new IllegalArgumentException("Invalid sort field: " + sort);
     }
     return sort;
   }
 
   public List<CompanyWithEmployeeResponse> getEmployeesByCompanyId(Long companyId) {
-    Company company = companyRepository.findById(companyId)
-        .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + companyId));
-    List<EmployeeResponse> employeeResponses = company.getUsers().stream()
-        .map(u -> new EmployeeResponse(u.getId(), u.getName())).toList();
+    Company company =
+        companyRepository
+            .findById(companyId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Company not found with id: " + companyId));
+    List<EmployeeResponse> employeeResponses =
+        company.getUsers().stream().map(u -> new EmployeeResponse(u.getId(), u.getName())).toList();
     return List.of(
         new CompanyWithEmployeeResponse(company.getId(), company.getName(), employeeResponses));
   }
 
   public List<CompanyWithProductsResponse> getProductsByCompanyId(Long companyId) {
-    Company company = companyRepository.findById(companyId)
-        .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + companyId));
+    Company company =
+        companyRepository
+            .findById(companyId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Company not found with id: " + companyId));
 
-    List<ProductResponse> productResponses = company.getProducts().stream()
-        .map(p -> new ProductResponse(p.getName(), p.getPrice()))
-        .toList();
+    List<ProductResponse> productResponses =
+        company.getProducts().stream()
+            .map(p -> new ProductResponse(p.getName(), p.getPrice()))
+            .toList();
     return List.of(
         new CompanyWithProductsResponse(company.getId(), company.getName(), productResponses));
   }

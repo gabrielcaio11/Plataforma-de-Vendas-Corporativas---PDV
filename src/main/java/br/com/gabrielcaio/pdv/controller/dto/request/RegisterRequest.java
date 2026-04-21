@@ -8,7 +8,4 @@ public record RegisterRequest(
     @NotBlank(message = "Email não pode ser blank") String email,
     @NotBlank(message = "Password não pode ser blank") String password,
     @NotBlank(message = "Role não pode ser blank") UserRole role,
-    Long company_id
-) {
-
-}
+    Long company_id) {}

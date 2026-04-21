@@ -42,9 +42,7 @@ public class CompanyController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<CompanyResponse>> getAll(
-      PageRequestDTO request
-  ) {
+  public ResponseEntity<Page<CompanyResponse>> getAll(PageRequestDTO request) {
     Page<CompanyResponse> responses = companyService.getAll(request);
     return ResponseEntity.ok(responses);
   }

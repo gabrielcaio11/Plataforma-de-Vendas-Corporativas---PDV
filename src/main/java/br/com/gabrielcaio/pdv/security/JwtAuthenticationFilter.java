@@ -19,16 +19,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
 
-  public JwtAuthenticationFilter(JwtService jwtService,
-      UserDetailsService userDetailsService) {
+  public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
     this.jwtService = jwtService;
     this.userDetailsService = userDetailsService;
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request,
-      HttpServletResponse response,
-      FilterChain filterChain)
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
     if (request.getRequestURI().startsWith("/auth/")) {
@@ -54,10 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         UsernamePasswordAuthenticationToken authToken =
             new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-            );
+                userDetails, null, userDetails.getAuthorities());
 
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

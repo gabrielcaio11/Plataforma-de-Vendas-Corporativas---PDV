@@ -27,7 +27,9 @@ public class TransactionService {
   private final ProductRepository productRepository;
   private final TransactionRepository transactionRepository;
 
-  public TransactionService(UserRepository userRepository, ProductRepository productRepository,
+  public TransactionService(
+      UserRepository userRepository,
+      ProductRepository productRepository,
       TransactionRepository transactionRepository) {
     this.userRepository = userRepository;
     this.productRepository = productRepository;
@@ -38,12 +40,13 @@ public class TransactionService {
 
     // 1. Usuário autenticado
     String email = SecurityUtils.getLoggedUserEmail();
-    User user = userRepository.findByEmail(email)
-        .orElseThrow();
+    User user = userRepository.findByEmail(email).orElseThrow();
 
     // 2. Produto do banco
-    Product product = productRepository.findById(request.productId())
-        .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+    Product product =
+        productRepository
+            .findById(request.productId())
+            .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
     // 3. Criar transação
     Transaction transaction = new Transaction();
@@ -57,53 +60,52 @@ public class TransactionService {
     Transaction savedTransaction = transactionRepository.save(transaction);
 
     // 5. Retornar resposta
-    BigDecimal totalPrice = savedTransaction.getPriceAtPurchase()
-        .multiply(new BigDecimal(savedTransaction.getQuantity()));
+    BigDecimal totalPrice =
+        savedTransaction
+            .getPriceAtPurchase()
+            .multiply(new BigDecimal(savedTransaction.getQuantity()));
     return new TransactionResponse(
         savedTransaction.getId(),
         savedTransaction.getProduct().getName(),
         savedTransaction.getQuantity(),
-        totalPrice
-    );
+        totalPrice);
   }
 
   public TransactionResponse getById(Long id) {
-    Transaction transaction = transactionRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
+    Transaction transaction =
+        transactionRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
     return new TransactionResponse(
         transaction.getId(),
         transaction.getProduct().getName(),
         transaction.getQuantity(),
-        transaction.getPriceAtPurchase().multiply(new BigDecimal(transaction.getQuantity()))
-    );
+        transaction.getPriceAtPurchase().multiply(new BigDecimal(transaction.getQuantity())));
   }
 
   public Page<TransactionResponse> getAll(PageRequestDTO request) {
 
-    Sort.Direction dir = request.direction().equalsIgnoreCase("desc")
-        ? Sort.Direction.DESC
-        : Sort.Direction.ASC;
+    Sort.Direction dir =
+        request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-    Pageable pageable = PageRequest.of(
-        request.page(),
-        request.size(),
-        Sort.by(dir, validateSort(request.sort()))
-    );
+    Pageable pageable =
+        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
 
     Page<Transaction> transactions = transactionRepository.findAll(pageable);
 
-    return transactions.map(t -> new TransactionResponse(
-        t.getId(),
-        t.getProduct().getName(),
-        t.getQuantity(),
-        t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))
-    ));
+    return transactions.map(
+        t ->
+            new TransactionResponse(
+                t.getId(),
+                t.getProduct().getName(),
+                t.getQuantity(),
+                t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))));
   }
 
   private String validateSort(String sort) {
 
-    List<String> ALLOWED_SORTS = List.of("quantity", "priceAtPurchase", "createdAt");
-    if (!ALLOWED_SORTS.contains(sort)) {
+    List<String> allowedSorts = List.of("quantity", "priceAtPurchase", "createdAt");
+    if (!allowedSorts.contains(sort)) {
       throw new IllegalArgumentException("Invalid sort field: " + sort);
     }
     return sort;
@@ -111,26 +113,27 @@ public class TransactionService {
 
   public Page<TransactionResponse> getAllMe(PageRequestDTO pageRequestDTO) {
     String email = SecurityUtils.getLoggedUserEmail();
-    User user = userRepository.findByEmail(email)
-        .orElseThrow();
+    User user = userRepository.findByEmail(email).orElseThrow();
 
-    Sort.Direction dir = pageRequestDTO.direction().equalsIgnoreCase("desc")
-        ? Sort.Direction.DESC
-        : Sort.Direction.ASC;
+    Sort.Direction dir =
+        pageRequestDTO.direction().equalsIgnoreCase("desc")
+            ? Sort.Direction.DESC
+            : Sort.Direction.ASC;
 
-    Pageable pageable = PageRequest.of(
-        pageRequestDTO.page(),
-        pageRequestDTO.size(),
-        Sort.by(dir, validateSort(pageRequestDTO.sort()))
-    );
+    Pageable pageable =
+        PageRequest.of(
+            pageRequestDTO.page(),
+            pageRequestDTO.size(),
+            Sort.by(dir, validateSort(pageRequestDTO.sort())));
 
     Page<Transaction> transactions = transactionRepository.findByUserId(user.getId(), pageable);
 
-    return transactions.map(t -> new TransactionResponse(
-        t.getId(),
-        t.getProduct().getName(),
-        t.getQuantity(),
-        t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))
-    ));
+    return transactions.map(
+        t ->
+            new TransactionResponse(
+                t.getId(),
+                t.getProduct().getName(),
+                t.getQuantity(),
+                t.getPriceAtPurchase().multiply(new BigDecimal(t.getQuantity()))));
   }
 }

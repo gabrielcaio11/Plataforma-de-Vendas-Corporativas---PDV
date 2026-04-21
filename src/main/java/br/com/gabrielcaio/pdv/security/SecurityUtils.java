@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class SecurityUtils {
 
   public static String getLoggedUserEmail() {
-    Object principal = Objects.requireNonNull(SecurityContextHolder.getContext()
-            .getAuthentication())
-        .getPrincipal();
+    Object principal =
+        Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication())
+            .getPrincipal();
 
     if (principal instanceof UserDetails userDetails) {
       return userDetails.getUsername();

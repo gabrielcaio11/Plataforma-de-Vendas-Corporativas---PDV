@@ -41,18 +41,14 @@ public class ProductController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('COLLABORATOR')")
   public ResponseEntity<ProductResponse> update(
-      @PathVariable Long id,
-      @RequestBody ProductRequest request
-  ) {
+      @PathVariable Long id, @RequestBody ProductRequest request) {
     Product entity = productService.update(id, request);
     ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<Page<ProductDetailsResponse>> getAll(
-      PageRequestDTO request
-  ) {
+  public ResponseEntity<Page<ProductDetailsResponse>> getAll(PageRequestDTO request) {
     Page<ProductDetailsResponse> responses = productService.getAll(request);
     return ResponseEntity.ok(responses);
   }
@@ -63,5 +59,3 @@ public class ProductController {
     return ResponseEntity.ok(response);
   }
 }
-
-

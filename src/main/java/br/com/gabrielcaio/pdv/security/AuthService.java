@@ -23,7 +23,8 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final CompanyRepository companyRepository;
 
-  public AuthService(AuthenticationManager authManager,
+  public AuthService(
+      AuthenticationManager authManager,
       JwtService jwtService,
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
@@ -37,12 +38,9 @@ public class AuthService {
 
   public String login(String email, String password) {
 
-    authManager.authenticate(
-        new UsernamePasswordAuthenticationToken(email, password)
-    );
+    authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-    User user = userRepository.findByEmail(email)
-        .orElseThrow();
+    User user = userRepository.findByEmail(email).orElseThrow();
 
     return jwtService.generateToken(user);
   }

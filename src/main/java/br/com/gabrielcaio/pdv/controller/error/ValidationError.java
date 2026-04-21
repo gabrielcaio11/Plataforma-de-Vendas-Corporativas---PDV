@@ -16,11 +16,10 @@ public class ValidationError extends ErrorMessage {
     this.errors = errors;
   }
 
-  public ValidationError() {
-  }
+  public ValidationError() {}
 
-  public ValidationError(Instant timestamp, Integer status, String error, String path,
-      List<FieldMessage> errors) {
+  public ValidationError(
+      Instant timestamp, Integer status, String error, String path, List<FieldMessage> errors) {
     super(timestamp, status, error, path);
     this.errors = errors;
   }

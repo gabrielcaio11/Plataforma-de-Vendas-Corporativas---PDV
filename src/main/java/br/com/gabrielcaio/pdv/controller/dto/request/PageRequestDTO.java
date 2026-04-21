@@ -6,7 +6,4 @@ public record PageRequestDTO(
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "10") int size,
     String sort,
-    @RequestParam(defaultValue = "asc") String direction
-) {
-
-}
+    @RequestParam(defaultValue = "asc") String direction) {}

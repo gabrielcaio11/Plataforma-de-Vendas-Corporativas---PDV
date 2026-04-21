@@ -27,7 +27,8 @@ public class ProductService {
   private final AuthorizationService authorizationService;
   private final CompanyRepository companyRepository;
 
-  public ProductService(ProductRepository productRepository,
+  public ProductService(
+      ProductRepository productRepository,
       UserRepository userRepository,
       AuthorizationService authorizationService,
       CompanyRepository companyRepository) {
@@ -41,12 +42,10 @@ public class ProductService {
 
     // 1. Usuário autenticado
     String email = SecurityUtils.getLoggedUserEmail();
-    User user = userRepository.findByEmail(email)
-        .orElseThrow();
+    User user = userRepository.findByEmail(email).orElseThrow();
 
     // 2. Produto do banco
-    Product product = productRepository.findById(productId)
-        .orElseThrow();
+    Product product = productRepository.findById(productId).orElseThrow();
 
     // 3. AUTORIZAÇÃO (ponto chave)
     authorizationService.checkProductOwnership(user, product);
@@ -61,8 +60,7 @@ public class ProductService {
   public Product create(ProductRequest request) {
 
     String email = SecurityUtils.getLoggedUserEmail();
-    User user = userRepository.findByEmail(email)
-        .orElseThrow();
+    User user = userRepository.findByEmail(email).orElseThrow();
 
     if (user.getCompany() == null) {
       throw new ForbiddenException("Apenas colaboradores podem criar produtos");
@@ -85,37 +83,24 @@ public class ProductService {
 
   public Page<ProductDetailsResponse> getAll(PageRequestDTO request) {
 
-    Sort.Direction dir = request.direction().equalsIgnoreCase("desc")
-        ? Sort.Direction.DESC
-        : Sort.Direction.ASC;
+    Sort.Direction dir =
+        request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-    Pageable pageable = PageRequest.of(
-        request.page(),
-        request.size(),
-        Sort.by(dir, validateSort(request.sort()))
-    );
+    Pageable pageable =
+        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
     Page<Product> products = productRepository.findAll(pageable);
 
-    return products.map(p -> new ProductDetailsResponse(
-        p.getId(),
-        p.getName(),
-        p.getPrice()
-    ));
+    return products.map(p -> new ProductDetailsResponse(p.getId(), p.getName(), p.getPrice()));
   }
 
   public ProductDetailsResponse getById(Long id) {
-    Product product = productRepository.findById(id)
-        .orElseThrow();
-    return new ProductDetailsResponse(
-        product.getId(),
-        product.getName(),
-        product.getPrice()
-    );
+    Product product = productRepository.findById(id).orElseThrow();
+    return new ProductDetailsResponse(product.getId(), product.getName(), product.getPrice());
   }
 
   private String validateSort(String sort) {
-    List<String> ALLOWED_SORTS = List.of("name", "price", "stock");
-    if (!ALLOWED_SORTS.contains(sort)) {
+    List<String> allowedSorts = List.of("name", "price", "stock");
+    if (!allowedSorts.contains(sort)) {
       throw new IllegalArgumentException("Invalid sort field: " + sort);
     }
     return sort;
