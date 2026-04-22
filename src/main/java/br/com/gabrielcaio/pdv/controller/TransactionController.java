@@ -5,6 +5,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.service.TransactionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,8 @@ public class TransactionController {
   }
 
   @PostMapping
-  public ResponseEntity<TransactionResponse> create(@RequestBody TransactionRequest request) {
+  public ResponseEntity<TransactionResponse> create(
+      @Valid @RequestBody TransactionRequest request) {
     TransactionResponse response = transactionService.create(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -39,13 +41,13 @@ public class TransactionController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<TransactionResponse>> getAll(PageRequestDTO pageRequestDTO) {
+  public ResponseEntity<Page<TransactionResponse>> getAll(@Valid PageRequestDTO pageRequestDTO) {
     Page<TransactionResponse> responses = transactionService.getAll(pageRequestDTO);
     return ResponseEntity.ok(responses);
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Page<TransactionResponse>> getAllMe(PageRequestDTO pageRequestDTO) {
+  public ResponseEntity<Page<TransactionResponse>> getAllMe(@Valid PageRequestDTO pageRequestDTO) {
     Page<TransactionResponse> responses = transactionService.getAllMe(pageRequestDTO);
     return ResponseEntity.ok(responses);
   }

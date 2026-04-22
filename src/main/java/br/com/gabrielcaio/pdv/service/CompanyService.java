@@ -1,11 +1,13 @@
 package br.com.gabrielcaio.pdv.service;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.EmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
+import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import java.util.List;
@@ -24,15 +26,18 @@ public class CompanyService {
     this.companyRepository = companyRepository;
   }
 
-  public CompanyResponse create(String name) {
+  public CompanyResponse create(CreateCompanyRequest request) {
     Company company = new Company();
-    company.setName(name);
+    company.setName(request.name());
     Company saved = companyRepository.save(company);
     return new CompanyResponse(saved.getId(), saved.getName());
   }
 
   public CompanyResponse getById(Long id) {
-    Company company = companyRepository.findById(id).orElseThrow();
+    Company company =
+        companyRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Company not found with id: " + id));
     return new CompanyResponse(company.getId(), company.getName());
   }
 

@@ -4,6 +4,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
 import br.com.gabrielcaio.pdv.security.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,14 +23,14 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-    String token = authService.login(request.email(), request.password());
+  public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    String token = authService.login(request);
     AuthResponse response = new AuthResponse(token);
     return ResponseEntity.ok(response);
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+  public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
     String token = authService.register(request);
     AuthResponse response = new AuthResponse(token);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
