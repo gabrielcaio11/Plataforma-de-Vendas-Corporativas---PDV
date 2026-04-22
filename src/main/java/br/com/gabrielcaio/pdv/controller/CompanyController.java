@@ -7,6 +7,7 @@ import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeRespons
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
 import br.com.gabrielcaio.pdv.service.CompanyService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class CompanyController {
   }
 
   @PostMapping
-  public ResponseEntity<CompanyResponse> create(@RequestBody CreateCompanyRequest request) {
-    CompanyResponse response = companyService.create(request.name());
+  public ResponseEntity<CompanyResponse> create(@Valid @RequestBody CreateCompanyRequest request) {
+    CompanyResponse response = companyService.create(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -42,7 +43,7 @@ public class CompanyController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<CompanyResponse>> getAll(PageRequestDTO request) {
+  public ResponseEntity<Page<CompanyResponse>> getAll(@Valid PageRequestDTO request) {
     Page<CompanyResponse> responses = companyService.getAll(request);
     return ResponseEntity.ok(responses);
   }

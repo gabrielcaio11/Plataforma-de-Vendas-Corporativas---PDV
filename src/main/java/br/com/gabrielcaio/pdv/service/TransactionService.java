@@ -3,7 +3,7 @@ package br.com.gabrielcaio.pdv.service;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
-import br.com.gabrielcaio.pdv.controller.error.ResourceNotFoundException;
+import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.domain.Transaction;
 import br.com.gabrielcaio.pdv.domain.User;

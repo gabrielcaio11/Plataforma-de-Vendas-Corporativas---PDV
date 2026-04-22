@@ -7,6 +7,7 @@ import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.service.ProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ProductController {
 
   @PostMapping
   @PreAuthorize("hasRole('COLLABORATOR')")
-  public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request) {
+  public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
     Product entity = productService.create(request);
     ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -41,14 +42,14 @@ public class ProductController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('COLLABORATOR')")
   public ResponseEntity<ProductResponse> update(
-      @PathVariable Long id, @RequestBody ProductRequest request) {
+      @PathVariable Long id, @Valid @RequestBody ProductRequest request) {
     Product entity = productService.update(id, request);
     ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<Page<ProductDetailsResponse>> getAll(PageRequestDTO request) {
+  public ResponseEntity<Page<ProductDetailsResponse>> getAll(@Valid PageRequestDTO request) {
     Page<ProductDetailsResponse> responses = productService.getAll(request);
     return ResponseEntity.ok(responses);
   }

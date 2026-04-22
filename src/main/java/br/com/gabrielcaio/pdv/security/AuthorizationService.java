@@ -1,6 +1,6 @@
 package br.com.gabrielcaio.pdv.security;
 
-import br.com.gabrielcaio.pdv.controller.error.ForbiddenException;
+import br.com.gabrielcaio.pdv.controller.exception.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.domain.User;
 import org.springframework.stereotype.Service;
