@@ -1,4 +1,4 @@
-package br.com.gabrielcaio.pdv.controller.error;
+package br.com.gabrielcaio.pdv.controller.exception.error;
 
 public class FieldMessage {
 

@@ -1,4 +1,4 @@
-package br.com.gabrielcaio.pdv.controller.error;
+package br.com.gabrielcaio.pdv.controller.exception.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
