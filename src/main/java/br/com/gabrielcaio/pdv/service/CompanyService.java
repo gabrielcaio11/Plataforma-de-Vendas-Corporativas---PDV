@@ -43,11 +43,14 @@ public class CompanyService {
 
   public Page<CompanyResponse> getAll(PageRequestDTO request) {
 
+    String direction = request.direction() == null ? "asc" : request.direction();
     Sort.Direction dir =
-        request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+    String sort = request.sort() == null ? "name" : request.sort();
 
     Pageable pageable =
-        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
+        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(sort)));
 
     Page<Company> companies = companyRepository.findAll(pageable);
     return companies.map(c -> new CompanyResponse(c.getId(), c.getName()));

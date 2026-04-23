@@ -81,6 +81,16 @@
       <groupId>org.springframework.boot</groupId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+    </dependency>
     <!-- Spring Security -->
     <dependency>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -135,7 +145,19 @@
   </parent>
   <properties>
     <java.version>21</java.version>
+    <testcontainers.version>1.20.6</testcontainers.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>testcontainers-bom</artifactId>
+        <groupId>org.testcontainers</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${testcontainers.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <scm>
     <connection/>
     <developerConnection/>

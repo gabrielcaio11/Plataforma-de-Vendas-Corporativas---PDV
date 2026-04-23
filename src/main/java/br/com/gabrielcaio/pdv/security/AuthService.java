@@ -9,6 +9,7 @@ import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import br.com.gabrielcaio.pdv.repository.UserRepository;
+import java.util.ArrayList;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,7 +60,12 @@ public class AuthService {
 
     // Consistencia bidecional entre User e Company
     Company company = user.getCompany();
-    company.getUsers().add(user);
+    if (company != null) {
+      if (company.getUsers() == null) {
+        company.setUsers(new ArrayList<>());
+      }
+      company.getUsers().add(user);
+    }
 
     userRepository.save(user);
 
