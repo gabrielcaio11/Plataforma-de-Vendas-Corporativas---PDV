@@ -6,7 +6,10 @@ import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
+import java.io.IOException;
+import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -16,8 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import java.io.IOException;
-import java.net.URI;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -68,6 +69,7 @@ class AuthLoginFlowIntegrationTest {
   }
 
   @Test
+  @DisplayName("Accessing protected route without token should return 401 Unauthorized")
   void companies_withoutToken_returnsUnauthorized() {
     ResponseEntity<String> response =
         restTemplate.getForEntity(url("/companies?page=0&size=10&sort=name"), String.class);
@@ -76,25 +78,26 @@ class AuthLoginFlowIntegrationTest {
   }
 
   @Test
+  @DisplayName("Registering and logging in should return a token that can access protected routes")
   void login_thenBearerAccessesProtectedRoute() {
+
+    // Register a new user with a unique email to avoid conflicts in repeated test runs
     String email = "flow-" + System.nanoTime() + "@integration.test";
     String password = "senha1234";
 
     RegisterRequest registerRequest =
-        new RegisterRequest(
-            "Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
+        new RegisterRequest("Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
 
     HttpHeaders json = new HttpHeaders();
     json.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<AuthResponse> registered =
         restTemplate.postForEntity(
-            url("/auth/register"),
-            new HttpEntity<>(registerRequest, json),
-            AuthResponse.class);
+            url("/auth/register"), new HttpEntity<>(registerRequest, json), AuthResponse.class);
 
     assertThat(registered.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+    // Now log in with the same credentials to get the token
     LoginRequest loginRequest = new LoginRequest(email, password);
     ResponseEntity<AuthResponse> loggedIn =
         restTemplate.postForEntity(
@@ -105,6 +108,7 @@ class AuthLoginFlowIntegrationTest {
     String token = loggedIn.getBody().token();
     assertThat(token).isNotBlank();
 
+    // Use the token to access a protected route
     HttpHeaders auth = new HttpHeaders();
     auth.setBearerAuth(token);
 

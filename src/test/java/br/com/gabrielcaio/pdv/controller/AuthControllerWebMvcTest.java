@@ -9,13 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
+import br.com.gabrielcaio.pdv.repository.UserRepository;
 import br.com.gabrielcaio.pdv.security.AuthService;
 import br.com.gabrielcaio.pdv.security.CustomAuthenticationEntryPoint;
 import br.com.gabrielcaio.pdv.security.CustomUserDetailsService;
 import br.com.gabrielcaio.pdv.security.JwtAuthenticationFilter;
 import br.com.gabrielcaio.pdv.security.JwtService;
 import br.com.gabrielcaio.pdv.security.SecurityConfig;
-import br.com.gabrielcaio.pdv.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
