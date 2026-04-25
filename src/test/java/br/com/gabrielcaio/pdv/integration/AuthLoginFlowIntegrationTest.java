@@ -121,4 +121,20 @@ class AuthLoginFlowIntegrationTest {
 
     assertThat(companies.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
+
+  @Test
+  @DisplayName("Logging in with invalid credentials should return 401 Unauthorized")
+  void login_withInvalidCredentials_returnsUnauthorized() {
+    LoginRequest loginRequest =
+        new LoginRequest("nonexistent-" + System.nanoTime() + "@integration.test", "wrongpassword");
+
+    HttpHeaders json = new HttpHeaders();
+    json.setContentType(MediaType.APPLICATION_JSON);
+
+    ResponseEntity<AuthResponse> response =
+        restTemplate.postForEntity(
+            url("/auth/login"), new HttpEntity<>(loginRequest, json), AuthResponse.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
 }
