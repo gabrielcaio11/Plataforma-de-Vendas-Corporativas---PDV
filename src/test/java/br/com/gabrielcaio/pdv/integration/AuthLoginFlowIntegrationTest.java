@@ -6,11 +6,14 @@ import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
+import io.jsonwebtoken.MalformedJwtException;
 import java.io.IOException;
 import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -136,5 +139,65 @@ class AuthLoginFlowIntegrationTest {
             url("/auth/login"), new HttpEntity<>(loginRequest, json), AuthResponse.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "invalid.token.here", // malformado
+        "abc", // não é JWT
+        "Bearer", // incompleto
+        "", // vazio
+        "eyJhbGciOiJIUzI1NiJ9..", // payload inválido
+      })
+  void protectedRoute_withInvalidTokens_returnsUnauthorized(String token) {
+
+    ResponseEntity<String> response =
+        restTemplate.exchange(
+            url("/companies?page=0&size=10&sort=name"),
+            HttpMethod.GET,
+            bearer(token),
+            String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  @DisplayName("Should return 401 when JWT is malformed")
+  void protectedRoute_withInvalidToken_returnsUnauthorized() throws MalformedJwtException {
+
+    HttpHeaders auth = new HttpHeaders();
+    auth.setBearerAuth("invalid.token.here");
+
+    ResponseEntity<String> companies =
+        restTemplate.exchange(
+            url("/companies?page=0&size=10&sort=name"),
+            HttpMethod.GET,
+            new HttpEntity<>(auth),
+            String.class);
+
+    assertThat(companies.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+    assertThat(companies.getBody())
+        .contains("\"status\":401")
+        .contains("\"message\":\"Unauthorized\"")
+        .contains("\"path\":\"/companies\"");
+  }
+
+  @Test
+  @DisplayName("Should return 401 when no token is provided")
+  void protectedRoute_withoutToken_returnsUnauthorized() {
+
+    ResponseEntity<String> response =
+        restTemplate.exchange(
+            url("/companies?page=0&size=10&sort=name"), HttpMethod.GET, null, String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  private HttpEntity<Void> bearer(String token) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(token);
+    return new HttpEntity<>(headers);
   }
 }
