@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.controller;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
@@ -33,7 +34,7 @@ public class ProductController {
 
   @PostMapping
   @PreAuthorize("hasRole('COLLABORATOR')")
-  public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
+  public ResponseEntity<ProductResponse> create(@Valid @RequestBody CreateProductRequest request) {
     Product entity = productService.create(request);
     ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
     return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.pdv.service;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
@@ -57,7 +58,7 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public Product create(ProductRequest request) {
+  public Product create(CreateProductRequest request) {
 
     String email = SecurityUtils.getLoggedUserEmail();
     User user = userRepository.findByEmail(email).orElseThrow();
@@ -66,7 +67,7 @@ public class ProductService {
       throw new ForbiddenException("Apenas colaboradores podem criar produtos");
     }
 
-    if (!Objects.equals(user.getCompany().getId(), request.company_id())) {
+    if (!Objects.equals(user.getCompany().getId(), request.companyId())) {
       throw new ForbiddenException("Você não pode criar produtos para outra empresa");
     }
 
