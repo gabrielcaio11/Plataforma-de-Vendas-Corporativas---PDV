@@ -15,7 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class CreateProductRequestTest {
+class CreateUpdateProductRequestTest {
 
   private Validator validator;
 

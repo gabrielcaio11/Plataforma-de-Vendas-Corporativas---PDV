@@ -2,7 +2,7 @@ package br.com.gabrielcaio.pdv.service;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
+import br.com.gabrielcaio.pdv.controller.dto.request.UpdateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.exception.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.domain.Product;
@@ -38,7 +38,7 @@ public class ProductService {
     this.companyRepository = companyRepository;
   }
 
-  public Product update(Long productId, ProductRequest request) {
+  public Product update(Long productId, UpdateProductRequest request) {
 
     // 1. Usuário autenticado
     String email = SecurityUtils.getLoggedUserEmail();

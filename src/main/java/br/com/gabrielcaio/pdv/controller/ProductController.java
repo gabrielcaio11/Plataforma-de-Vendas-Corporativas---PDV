@@ -2,7 +2,7 @@ package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
+import br.com.gabrielcaio.pdv.controller.dto.request.UpdateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.domain.Product;
@@ -43,7 +43,7 @@ public class ProductController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('COLLABORATOR')")
   public ResponseEntity<ProductResponse> update(
-      @PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+      @PathVariable Long id, @Valid @RequestBody UpdateProductRequest request) {
     Product entity = productService.update(id, request);
     ProductResponse response = new ProductResponse(entity.getName(), entity.getPrice());
     return ResponseEntity.ok(response);
