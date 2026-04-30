@@ -1,10 +1,6 @@
 package br.com.gabrielcaio.pdv.controller.dto.request;
 
-public record PageRequestDTO(
-    Integer page,
-    Integer size,
-    String sort,
-    String direction) {
+public record PageRequestDTO(Integer page, Integer size, String sort, String direction) {
 
   public PageRequestDTO {
     if (page == null) page = 0;

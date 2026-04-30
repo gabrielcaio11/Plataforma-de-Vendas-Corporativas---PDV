@@ -37,8 +37,9 @@ class LoginRequestTest {
     var request = new LoginRequest("dev@gabrielcaio.com", "1234567");
     var violations = validator.validate(request);
 
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().equals("Senha com no mínimo 8 caracteres")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().equals("Senha com no mínimo 8 caracteres")));
   }
 
   @Test

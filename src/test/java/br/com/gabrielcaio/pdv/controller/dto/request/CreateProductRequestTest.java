@@ -34,8 +34,9 @@ class CreateProductRequestTest {
     var violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().equals("O nome do produto é obrigatório")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().equals("O nome do produto é obrigatório")));
   }
 
   @Test
@@ -44,8 +45,9 @@ class CreateProductRequestTest {
     var request = new CreateProductRequest("Arroz", null, 10, 1L);
     var violations = validator.validate(request);
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().contains("O preço do produto é obrigatório")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O preço do produto é obrigatório")));
   }
 
   @Test
@@ -54,7 +56,9 @@ class CreateProductRequestTest {
     var request = new CreateProductRequest("Arroz", new BigDecimal("-1.00"), 10, 1L);
     var violations = validator.validate(request);
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("O preço deve ser maior ou igual a zero")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O preço deve ser maior ou igual a zero")));
   }
 
   @Test
@@ -63,8 +67,9 @@ class CreateProductRequestTest {
     var request = new CreateProductRequest("Arroz", new BigDecimal("5.50"), null, 1L);
     var violations = validator.validate(request);
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().contains("A quantidade em estoque é obrigatória")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("A quantidade em estoque é obrigatória")));
   }
 
   @Test
@@ -74,10 +79,10 @@ class CreateProductRequestTest {
     var violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().contains("O estoque não pode ser negativo")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O estoque não pode ser negativo")));
   }
-
 
   @Test
   @DisplayName("Deve falhar quando o companyId for nulo")
@@ -85,8 +90,9 @@ class CreateProductRequestTest {
     var request = new CreateProductRequest("Arroz", new BigDecimal("5.50"), 10, null);
     var violations = validator.validate(request);
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream()
-        .anyMatch(v -> v.getMessage().contains("O ID da empresa é obrigatório")));
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O ID da empresa é obrigatório")));
   }
 
   @Test
@@ -111,5 +117,4 @@ class CreateProductRequestTest {
     assertEquals(stock, request.stock());
     assertEquals(companyId, request.companyId());
   }
-
 }

@@ -1,5 +1,9 @@
 package br.com.gabrielcaio.pdv.controller.dto.request;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -8,11 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateCompanyRequestTest {
 
@@ -40,7 +39,8 @@ class CreateCompanyRequestTest {
     var violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Nome da empresa é obrigatório")));
+    assertTrue(
+        violations.stream().anyMatch(v -> v.getMessage().equals("Nome da empresa é obrigatório")));
   }
 
   @Test
@@ -50,7 +50,8 @@ class CreateCompanyRequestTest {
     var violations = validator.validate(request);
 
     assertFalse(violations.isEmpty());
-    assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Nome da empresa é obrigatório")));
+    assertTrue(
+        violations.stream().anyMatch(v -> v.getMessage().equals("Nome da empresa é obrigatório")));
     assertEquals("Nome da empresa é obrigatório", violations.iterator().next().getMessage());
   }
 }

@@ -17,5 +17,4 @@ class PageRequestDTOTest {
     assertEquals(10, request.size());
     assertEquals("asc", request.direction());
   }
-
 }

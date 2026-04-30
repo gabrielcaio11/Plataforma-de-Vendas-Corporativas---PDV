@@ -219,15 +219,14 @@ class CompanyControllerJwtWebMvcTest {
     String token = jwtService.generateToken(user);
 
     String jsonContent =
-        invalidName == null ?
-            "{\"name\": null}" :
-            "{\"name\": \"" + invalidName + "\"}";
+        invalidName == null ? "{\"name\": null}" : "{\"name\": \"" + invalidName + "\"}";
 
-
-    mockMvc.perform(post("/companies")
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-            .content(jsonContent))
+    mockMvc
+        .perform(
+            post("/companies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .content(jsonContent))
         .andExpect(status().isUnprocessableEntity());
   }
 }
