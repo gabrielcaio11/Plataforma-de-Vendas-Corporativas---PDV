@@ -1,7 +1,7 @@
 package br.com.gabrielcaio.pdv.service;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.exception.error.ForbiddenException;
@@ -15,7 +15,6 @@ import br.com.gabrielcaio.pdv.security.SecurityUtils;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -82,13 +81,13 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public Page<ProductDetailsResponse> getAll(PageRequestDTO request) {
+  public Page<ProductDetailsResponse> getAll(PageRequest request) {
 
     Sort.Direction dir =
         request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
     Pageable pageable =
-        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
+        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
     Page<Product> products = productRepository.findAll(pageable);
 
     return products.map(p -> new ProductDetailsResponse(p.getId(), p.getName(), p.getPrice()));

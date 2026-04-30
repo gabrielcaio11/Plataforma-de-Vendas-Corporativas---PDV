@@ -1,6 +1,6 @@
 package br.com.gabrielcaio.pdv.controller;
 
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.service.TransactionService;
@@ -41,14 +41,14 @@ public class TransactionController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<TransactionResponse>> getAll(@Valid PageRequestDTO pageRequestDTO) {
-    Page<TransactionResponse> responses = transactionService.getAll(pageRequestDTO);
+  public ResponseEntity<Page<TransactionResponse>> getAll(@Valid PageRequest pageRequest) {
+    Page<TransactionResponse> responses = transactionService.getAll(pageRequest);
     return ResponseEntity.ok(responses);
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Page<TransactionResponse>> getAllMe(@Valid PageRequestDTO pageRequestDTO) {
-    Page<TransactionResponse> responses = transactionService.getAllMe(pageRequestDTO);
+  public ResponseEntity<Page<TransactionResponse>> getAllMe(@Valid PageRequest pageRequest) {
+    Page<TransactionResponse> responses = transactionService.getAllMe(pageRequest);
     return ResponseEntity.ok(responses);
   }
 }

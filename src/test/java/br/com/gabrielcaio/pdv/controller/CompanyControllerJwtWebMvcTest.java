@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.domain.User;
@@ -158,7 +158,7 @@ class CompanyControllerJwtWebMvcTest {
   @Test
   @DisplayName("GET /companies - whitout Bearer token should return 401 Unauthorized")
   void getAll_withoutBearer_returnsUnauthorized() throws Exception {
-    PageRequestDTO pageRequest = new PageRequestDTO(0, 10, "name", "asc");
+    PageRequest pageRequest = new PageRequest(0, 10, "name", "asc");
 
     mockMvc
         .perform(
@@ -182,7 +182,7 @@ class CompanyControllerJwtWebMvcTest {
     user.setRole(UserRole.CONSUMER);
     user.setCompany(null);
 
-    PageRequestDTO pageRequest = new PageRequestDTO(0, 10, "name", "asc");
+    PageRequest pageRequest = new PageRequest(0, 10, "name", "asc");
 
     when(userRepository.findByEmail("jwt-mvc@test.com")).thenReturn(Optional.of(user));
     when(companyService.getById(eq(1L))).thenReturn(new CompanyResponse(1L, "Acme"));

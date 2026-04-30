@@ -1,7 +1,7 @@
 package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
@@ -43,7 +43,7 @@ public class CompanyController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<CompanyResponse>> getAll(@Valid PageRequestDTO request) {
+  public ResponseEntity<Page<CompanyResponse>> getAll(@Valid PageRequest request) {
     Page<CompanyResponse> responses = companyService.getAll(request);
     return ResponseEntity.ok(responses);
   }

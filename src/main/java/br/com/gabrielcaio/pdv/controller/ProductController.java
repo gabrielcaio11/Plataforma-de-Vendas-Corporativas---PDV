@@ -1,7 +1,7 @@
 package br.com.gabrielcaio.pdv.controller;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.ProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
@@ -50,7 +50,7 @@ public class ProductController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<ProductDetailsResponse>> getAll(@Valid PageRequestDTO request) {
+  public ResponseEntity<Page<ProductDetailsResponse>> getAll(@Valid PageRequest request) {
     Page<ProductDetailsResponse> responses = productService.getAll(request);
     return ResponseEntity.ok(responses);
   }

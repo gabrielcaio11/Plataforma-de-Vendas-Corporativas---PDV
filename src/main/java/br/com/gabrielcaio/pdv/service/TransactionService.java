@@ -1,6 +1,6 @@
 package br.com.gabrielcaio.pdv.service;
 
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.TransactionResponse;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -83,13 +82,13 @@ public class TransactionService {
         transaction.getPriceAtPurchase().multiply(new BigDecimal(transaction.getQuantity())));
   }
 
-  public Page<TransactionResponse> getAll(PageRequestDTO request) {
+  public Page<TransactionResponse> getAll(PageRequest request) {
 
     Sort.Direction dir =
         request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
     Pageable pageable =
-        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
+        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
 
     Page<Transaction> transactions = transactionRepository.findAll(pageable);
 
@@ -111,20 +110,20 @@ public class TransactionService {
     return sort;
   }
 
-  public Page<TransactionResponse> getAllMe(PageRequestDTO pageRequestDTO) {
+  public Page<TransactionResponse> getAllMe(PageRequest pageRequest) {
     String email = SecurityUtils.getLoggedUserEmail();
     User user = userRepository.findByEmail(email).orElseThrow();
 
     Sort.Direction dir =
-        pageRequestDTO.direction().equalsIgnoreCase("desc")
+        pageRequest.direction().equalsIgnoreCase("desc")
             ? Sort.Direction.DESC
             : Sort.Direction.ASC;
 
     Pageable pageable =
-        PageRequest.of(
-            pageRequestDTO.page(),
-            pageRequestDTO.size(),
-            Sort.by(dir, validateSort(pageRequestDTO.sort())));
+        org.springframework.data.domain.PageRequest.of(
+            pageRequest.page(),
+            pageRequest.size(),
+            Sort.by(dir, validateSort(pageRequest.sort())));
 
     Page<Transaction> transactions = transactionRepository.findByUserId(user.getId(), pageable);
 

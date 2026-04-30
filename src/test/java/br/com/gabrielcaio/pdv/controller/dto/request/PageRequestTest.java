@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class PageRequestDTOTest {
+class PageRequestTest {
 
   @Test
   @DisplayName("Deve aplicar valores padrão quando os campos forem nulos")
   void shouldApplyDefaultValues() {
 
-    var request = new PageRequestDTO(null, null, null, null);
+    var request = new PageRequest(null, null, null, null);
 
     assertEquals(0, request.page());
     assertEquals(10, request.size());
