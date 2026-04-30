@@ -17,6 +17,7 @@ import br.com.gabrielcaio.pdv.security.JwtAuthenticationFilter;
 import br.com.gabrielcaio.pdv.security.JwtService;
 import br.com.gabrielcaio.pdv.security.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -46,6 +47,7 @@ class AuthControllerWebMvcTest {
   @MockitoBean private UserRepository userRepository;
 
   @Test
+  @DisplayName("POST /auth/login - with valid credentials should return 200 OK and token")
   void login_returnsToken() throws Exception {
     when(authService.login(any(LoginRequest.class))).thenReturn("token-jwt");
 
@@ -61,6 +63,7 @@ class AuthControllerWebMvcTest {
   }
 
   @Test
+  @DisplayName("POST /auth/register - with valid data should return 201 Created and token")
   void register_returnsCreatedAndToken() throws Exception {
     when(authService.register(any(RegisterRequest.class))).thenReturn("token-novo");
 

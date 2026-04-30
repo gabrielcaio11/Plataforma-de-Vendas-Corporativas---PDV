@@ -1,7 +1,7 @@
 package br.com.gabrielcaio.pdv.service;
 
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
-import br.com.gabrielcaio.pdv.controller.dto.request.PageRequestDTO;
+import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
@@ -12,7 +12,6 @@ import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import java.util.List;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class CompanyService {
     return new CompanyResponse(company.getId(), company.getName());
   }
 
-  public Page<CompanyResponse> getAll(PageRequestDTO request) {
+  public Page<CompanyResponse> getAll(PageRequest request) {
 
     String direction = request.direction() == null ? "asc" : request.direction();
     Sort.Direction dir =
@@ -50,7 +49,7 @@ public class CompanyService {
     String sort = request.sort() == null ? "name" : request.sort();
 
     Pageable pageable =
-        PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(sort)));
+        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(sort)));
 
     Page<Company> companies = companyRepository.findAll(pageable);
     return companies.map(c -> new CompanyResponse(c.getId(), c.getName()));

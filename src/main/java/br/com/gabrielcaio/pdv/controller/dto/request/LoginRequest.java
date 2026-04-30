@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record LoginRequest(
-    @NotBlank(message = "Email não pode ser null") @Email String email,
-    @NotBlank(message = "Password não pode ser null")
+    @NotBlank(message = "E-mail é obrigatório") @Email String email,
+    @NotBlank(message = "Password é obrigatório")
         @Size(min = 8, message = "Senha com no mínimo 8 caracteres")
         String password) {}
