@@ -1,7 +1,5 @@
 package br.com.gabrielcaio.pdv.controller.dto.request;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 public record PageRequestDTO(
     Integer page,
     Integer size,
