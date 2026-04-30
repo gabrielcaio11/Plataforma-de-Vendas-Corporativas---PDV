@@ -24,6 +24,9 @@ import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -196,5 +199,35 @@ class CompanyControllerJwtWebMvcTest {
                 .param("sort", pageRequest.sort())
                 .param("direction", pageRequest.direction()))
         .andExpect(status().isOk());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "   "})
+  @NullSource
+  @DisplayName("POST /companies - should return 422 when name is null or blank")
+  void create_withInvalidName_returnsUnprocessableEntity(String invalidName) throws Exception {
+
+    User user = new User();
+    user.setId(10L);
+    user.setName("Api");
+    user.setEmail("jwt-mvc@test.com");
+    user.setPassword("ignored");
+    user.setRole(UserRole.CONSUMER);
+    user.setCompany(null);
+
+    when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    String token = jwtService.generateToken(user);
+
+    String jsonContent =
+        invalidName == null ?
+            "{\"name\": null}" :
+            "{\"name\": \"" + invalidName + "\"}";
+
+
+    mockMvc.perform(post("/companies")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .content(jsonContent))
+        .andExpect(status().isUnprocessableEntity());
   }
 }
