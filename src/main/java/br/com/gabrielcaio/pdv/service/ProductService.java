@@ -4,6 +4,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.CreateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UpdateProductRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductDetailsResponse;
+import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ForbiddenException;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.domain.User;
@@ -45,12 +46,15 @@ public class ProductService {
     User user = userRepository.findByEmail(email).orElseThrow();
 
     // 2. Produto do banco
-    Product product = productRepository.findById(productId).orElseThrow();
+    Product product = productRepository.findById(productId).orElseThrow(
+        () -> new BusinessException("Product not founded with id: " + productId)
+    );
 
     // 3. AUTORIZAÇÃO (ponto chave)
     authorizationService.checkProductOwnership(user, product);
 
     // 4. Atualização
+
     product.setName(request.name());
     product.setPrice(request.price());
 
