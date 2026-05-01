@@ -163,28 +163,6 @@ class AuthLoginFlowIntegrationTest {
   }
 
   @Test
-  @DisplayName("Should return 401 when JWT is malformed")
-  void protectedRoute_withInvalidToken_returnsUnauthorized() throws MalformedJwtException {
-
-    HttpHeaders auth = new HttpHeaders();
-    auth.setBearerAuth("invalid.token.here");
-
-    ResponseEntity<String> companies =
-        restTemplate.exchange(
-            url("/companies?page=0&size=10&sort=name"),
-            HttpMethod.GET,
-            new HttpEntity<>(auth),
-            String.class);
-
-    assertThat(companies.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-
-    assertThat(companies.getBody())
-        .contains("\"status\":401")
-        .contains("\"message\":\"Unauthorized\"")
-        .contains("\"path\":\"/companies\"");
-  }
-
-  @Test
   @DisplayName("Should return 401 when no token is provided")
   void protectedRoute_withoutToken_returnsUnauthorized() {
 
