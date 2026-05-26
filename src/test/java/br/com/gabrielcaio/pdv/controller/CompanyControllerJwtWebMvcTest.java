@@ -23,6 +23,7 @@ import br.com.gabrielcaio.pdv.security.SecurityConfig;
 import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -45,6 +46,7 @@ import org.springframework.test.web.servlet.MockMvc;
   JwtService.class,
   CustomUserDetailsService.class
 })
+@Tag("slice")
 class CompanyControllerJwtWebMvcTest {
 
   @Autowired private MockMvc mockMvc;

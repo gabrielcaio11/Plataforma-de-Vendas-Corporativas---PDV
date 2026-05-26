@@ -6,11 +6,11 @@ import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
-import io.jsonwebtoken.MalformedJwtException;
 import java.io.IOException;
 import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -32,10 +32,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+@Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
-class AuthLoginFlowIntegrationTest {
+class AuthLoginFlowIT {
 
   @Container
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
@@ -84,7 +85,6 @@ class AuthLoginFlowIntegrationTest {
   @DisplayName("Registering and logging in should return a token that can access protected routes")
   void login_thenBearerAccessesProtectedRoute() {
 
-    // Register a new user with a unique email to avoid conflicts in repeated test runs
     String email = "flow-" + System.nanoTime() + "@integration.test";
     String password = "senha1234";
 
@@ -100,7 +100,6 @@ class AuthLoginFlowIntegrationTest {
 
     assertThat(registered.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-    // Now log in with the same credentials to get the token
     LoginRequest loginRequest = new LoginRequest(email, password);
     ResponseEntity<AuthResponse> loggedIn =
         restTemplate.postForEntity(
@@ -111,7 +110,6 @@ class AuthLoginFlowIntegrationTest {
     String token = loggedIn.getBody().token();
     assertThat(token).isNotBlank();
 
-    // Use the token to access a protected route
     HttpHeaders auth = new HttpHeaders();
     auth.setBearerAuth(token);
 
@@ -144,11 +142,11 @@ class AuthLoginFlowIntegrationTest {
   @ParameterizedTest
   @ValueSource(
       strings = {
-        "invalid.token.here", // malformado
-        "abc", // não é JWT
-        "Bearer", // incompleto
-        "", // vazio
-        "eyJhbGciOiJIUzI1NiJ9..", // payload inválido
+        "invalid.token.here",
+        "abc",
+        "Bearer",
+        "",
+        "eyJhbGciOiJIUzI1NiJ9..",
       })
   void protectedRoute_withInvalidTokens_returnsUnauthorized(String token) {
 
