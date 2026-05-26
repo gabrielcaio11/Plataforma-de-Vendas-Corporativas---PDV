@@ -119,4 +119,26 @@ class CompanyServiceTest {
     assertEquals(1L, response.id());
     assertEquals("Acme", response.name());
   }
+
+  @Test
+  @DisplayName("should Throw ResourceNotFoundException When Company Not Exist In GetProductsByCompanyId")
+  void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetProductsByCompanyId() {
+    when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+    ResourceNotFoundException exception =
+        assertThrows(ResourceNotFoundException.class, () -> companyService.getProductsByCompanyId(99L));
+
+    assertEquals("Company not found with id: 99", exception.getMessage());
+
+  }
+
+  @Test
+  @DisplayName("shouldThrowResourceNotFoundExceptionWhenGetEmployeesByCompanyIdNotExist")
+  void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetEmployeesByCompanyId() {
+    when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+    ResourceNotFoundException exception =
+        assertThrows(ResourceNotFoundException.class, () -> companyService.getEmployeesByCompanyId(99L));
+
+    assertEquals("Company not found with id: 99", exception.getMessage());
+
+  }
 }

@@ -62,7 +62,7 @@ public class CompanyService {
         companyRepository
             .findById(companyId)
             .orElseThrow(
-                () -> new IllegalArgumentException("Company not found with id: " + companyId));
+                () -> new ResourceNotFoundException("Company not found with id: " + companyId));
     List<EmployeeResponse> employeeResponses =
         company.getUsers().stream().map(u -> new EmployeeResponse(u.getId(), u.getName())).toList();
     return List.of(
@@ -74,7 +74,7 @@ public class CompanyService {
         companyRepository
             .findById(companyId)
             .orElseThrow(
-                () -> new IllegalArgumentException("Company not found with id: " + companyId));
+                () -> new ResourceNotFoundException("Company not found with id: " + companyId));
 
     List<ProductResponse> productResponses =
         company.getProducts().stream()
