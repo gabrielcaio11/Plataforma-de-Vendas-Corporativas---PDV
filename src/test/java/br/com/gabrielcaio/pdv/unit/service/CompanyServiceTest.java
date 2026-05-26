@@ -16,8 +16,12 @@ import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsRespons
 import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
+import br.com.gabrielcaio.pdv.domain.Product;
+import br.com.gabrielcaio.pdv.domain.User;
+import br.com.gabrielcaio.pdv.domain.UserRole;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import br.com.gabrielcaio.pdv.service.CompanyService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +97,7 @@ class CompanyServiceTest {
   }
 
   @Test
-  @DisplayName("shouldBusinessExceptionWhenNameExists")
+  @DisplayName("shouldBusinessExceptionWhenCompanyNameExists")
   void shouldBusinessExceptionWhenNameExists() {
     when(companyRepository.findByName("Acme")).thenReturn(Optional.of(new Company()));
 
@@ -153,6 +157,51 @@ class CompanyServiceTest {
 
   }
 
+  @Test
+  @DisplayName("shouldReturnEmployeeListWhenCompanyHasEmployees")
+  void shouldReturnEmployeeListWhenCompanyHasEmployees() {
+
+    User user1 = new User();
+    user1.setId(1L);
+    user1.setName("John Doe");
+    user1.setEmail("gabriel@gmail.com");
+    user1.setPassword("password");
+    user1.setRole(UserRole.COLLABORATOR);
+
+    User user2 = new User();
+    user2.setId(2L);
+    user2.setName("Jane Smith");
+    user2.setEmail("jane@gmail.com");
+    user2.setPassword("password");
+    user2.setRole(UserRole.COLLABORATOR);
+
+    Company company = new Company();
+    company.setId(1L);
+    company.setName("Acme");
+    company.setUsers(List.of(
+        user1, user2
+    ));
+
+    user1.setCompany(company);
+    user2.setCompany(company);
+
+
+    company.setUsers(List.of(
+        user1, user2
+    ));
+
+    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+    List<CompanyWithEmployeeResponse> response = companyService.getEmployeesByCompanyId(1L);
+    assertEquals(1, response.size());
+    assertEquals(1L, response.get(0).id());
+    assertEquals("Acme", response.get(0).nameCompany());
+    assertEquals(2, response.get(0).employees().size());
+    assertEquals(1L, response.get(0).employees().get(0).id());
+    assertEquals("John Doe", response.get(0).employees().get(0).name());
+    assertEquals(2L, response.get(0).employees().get(1).id());
+    assertEquals("Jane Smith", response.get(0).employees().get(1).name());
+  }
 
   @Test
   @DisplayName("shouldThrowResourceNotFoundExceptionWhenGetEmployeesByCompanyIdNotExist")
@@ -181,5 +230,40 @@ class CompanyServiceTest {
     assertEquals(1L, response.get(0).id());
     assertEquals("Acme", response.get(0).nameCompany());
     assertTrue(response.get(0).products().isEmpty());
+  }
+
+  @Test
+  @DisplayName("shouldReturnProductListWhenCompanyHasProducts")
+  void shouldReturnProductListWhenCompanyHasProducts() {
+      Company company = new Company();
+      company.setId(1L);
+      company.setName("Acme");
+
+      Product product1 = new Product();
+      product1.setName("Product 1");
+      product1.setPrice(BigDecimal.valueOf(10.0));
+      product1.setCompany(company);
+
+      Product product2 = new Product();
+      product2.setName("Product 2");
+      product2.setPrice(BigDecimal.valueOf(20.0));
+      product2.setCompany(company);
+
+      company.setProducts(List.of(
+          product1, product2
+      ));
+
+      when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+      List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+
+      assertEquals(1, response.size());
+      assertEquals(1L, response.get(0).id());
+      assertEquals("Acme", response.get(0).nameCompany());
+      assertEquals(2, response.get(0).products().size());
+      assertEquals("Product 1", response.get(0).products().get(0).name());
+      assertEquals(BigDecimal.valueOf(10.0), response.get(0).products().get(0).price());
+      assertEquals("Product 2", response.get(0).products().get(1).name());
+      assertEquals(BigDecimal.valueOf(20.0), response.get(0).products().get(1).price());
   }
 }
