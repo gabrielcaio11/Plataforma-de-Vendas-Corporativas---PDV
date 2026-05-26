@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class LoginRequestTest {
@@ -31,15 +32,24 @@ class LoginRequestTest {
     assertFalse(violations.isEmpty());
   }
 
-  @Test
-  @DisplayName("Deve falhar se a senha tiver menos de 8 caracteres")
-  void shouldFailWithShortPassword() {
-    var request = new LoginRequest("dev@gabrielcaio.com", "1234567");
+  @ParameterizedTest
+  @NullSource
+  @ValueSource(strings = {"", " ", "   "})
+  @DisplayName("Deve falhar quando a senha estiver vazia, nula ou em branco")
+  void shouldFailWithBlankPassword(String invalidPassword) {
+    var request = new LoginRequest("dev@gabrielcaio.com", invalidPassword);
     var violations = validator.validate(request);
 
-    assertTrue(
-        violations.stream()
-            .anyMatch(v -> v.getMessage().equals("Senha com no mínimo 8 caracteres")));
+    assertFalse(violations.isEmpty());
+    assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Password é obrigatório")));
+  }
+
+  @Test
+  @DisplayName("Deve aceitar senha com menos de 8 caracteres no login")
+  void shouldAcceptShortPasswordOnLogin() {
+    var request = new LoginRequest("dev@gabrielcaio.com", "1234567");
+    var violations = validator.validate(request);
+    assertTrue(violations.isEmpty());
   }
 
   @Test
