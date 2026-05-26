@@ -37,6 +37,9 @@ public class User {
   @JoinColumn(name = "company_id")
   private Company company;
 
+  public User() {
+  }
+
   public Long getId() {
     return id;
   }
