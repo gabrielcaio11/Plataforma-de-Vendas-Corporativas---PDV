@@ -104,6 +104,65 @@ class CreateUpdateProductRequestTest {
   }
 
   @Test
+  @DisplayName("Deve passar com dados totalmente válidos na criação")
+  void shouldPassWithValidCreateRequest() {
+    var request = new CreateProductRequest("Arroz", new BigDecimal("5.50"), 10, 1L);
+    assertTrue(validator.validate(request).isEmpty());
+  }
+
+  @Test
+  @DisplayName("Deve aceitar preço e estoque zero na criação")
+  void shouldAcceptZeroPriceAndStockOnCreate() {
+    var request = new CreateProductRequest("Brinde", BigDecimal.ZERO, 0, 1L);
+    assertTrue(validator.validate(request).isEmpty());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "   "})
+  @NullSource
+  @DisplayName("Deve falhar para diferentes tipos de nomes inválidos na atualização")
+  void shouldFailUpdateWithInvalidNames(String invalidName) {
+    var request = new UpdateProductRequest(invalidName, new BigDecimal("5.50"), null, null);
+    var violations = validator.validate(request);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().equals("O nome do produto é obrigatório")));
+  }
+
+  @Test
+  @DisplayName("Deve falhar na atualização quando o preço for nulo")
+  void shouldFailUpdateWhenPriceIsNull() {
+    var request = new UpdateProductRequest("Arroz", null, null, null);
+    var violations = validator.validate(request);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O preço do produto é obrigatório")));
+  }
+
+  @Test
+  @DisplayName("Não deve aceitar preço negativo na atualização")
+  void shouldNotAcceptNegativePriceOnUpdate() {
+    var request = new UpdateProductRequest("Arroz", new BigDecimal("-1.00"), null, null);
+    var violations = validator.validate(request);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream()
+            .anyMatch(v -> v.getMessage().contains("O preço deve ser maior ou igual a zero")));
+  }
+
+  @Test
+  @DisplayName("Deve passar com dados válidos na atualização")
+  void shouldPassWithValidUpdateRequest() {
+    var request = new UpdateProductRequest("Arroz", new BigDecimal("9.99"), null, null);
+    assertTrue(validator.validate(request).isEmpty());
+  }
+
+  @Test
   void testCreateProductRequest() {
     String name = "Produto Teste";
     BigDecimal price = new BigDecimal("19.99");
