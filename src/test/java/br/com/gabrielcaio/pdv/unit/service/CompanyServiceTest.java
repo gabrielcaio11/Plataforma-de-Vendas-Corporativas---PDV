@@ -7,8 +7,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
+import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
@@ -85,5 +87,18 @@ class CompanyServiceTest {
         assertThrows(IllegalArgumentException.class, () -> companyService.getAll(request));
 
     assertEquals("Invalid sort field: invalid", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("shouldBusinessExceptionWhenNameExists")
+  void shouldBusinessExceptionWhenNameExists() {
+    when(companyRepository.findByName("Acme")).thenReturn(Optional.of(new Company()));
+
+    CreateCompanyRequest request = new CreateCompanyRequest("Acme");
+
+    BusinessException exception =
+        assertThrows(BusinessException.class, () -> companyService.create(request));
+
+    assertEquals("Company name already exists: Acme", exception.getMessage());
   }
 }
