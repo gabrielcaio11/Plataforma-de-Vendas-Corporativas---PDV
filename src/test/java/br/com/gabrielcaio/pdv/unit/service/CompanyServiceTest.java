@@ -2,6 +2,7 @@ package br.com.gabrielcaio.pdv.unit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,8 @@ import static org.mockito.Mockito.when;
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
 import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
@@ -132,6 +135,26 @@ class CompanyServiceTest {
   }
 
   @Test
+  @DisplayName("shouldReturnEmptyEmployeeListWhenCompanyHasNoEmployees")
+  void shouldReturnEmptyEmployeeListWhenCompanyHasNoEmployees() {
+    Company company = new Company();
+    company.setId(1L);
+    company.setName("Acme");
+    company.setUsers(List.of());
+
+    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+    List<CompanyWithEmployeeResponse> response = companyService.getEmployeesByCompanyId(1L);
+
+    assertEquals(1, response.size());
+    assertEquals(1L, response.get(0).id());
+    assertEquals("Acme", response.get(0).nameCompany());
+    assertTrue(response.get(0).employees().isEmpty());
+
+  }
+
+
+  @Test
   @DisplayName("shouldThrowResourceNotFoundExceptionWhenGetEmployeesByCompanyIdNotExist")
   void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetEmployeesByCompanyId() {
     when(companyRepository.findById(99L)).thenReturn(Optional.empty());
@@ -140,5 +163,23 @@ class CompanyServiceTest {
 
     assertEquals("Company not found with id: 99", exception.getMessage());
 
+  }
+
+  @Test
+  @DisplayName("shouldReturnEmptyProductListWhenCompanyHasNoProducts")
+  void shouldReturnEmptyProductListWhenCompanyHasNoProducts() {
+    Company company = new Company();
+    company.setId(1L);
+    company.setName("Acme");
+    company.setProducts(List.of());
+
+    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+    List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+
+    assertEquals(1, response.size());
+    assertEquals(1L, response.get(0).id());
+    assertEquals("Acme", response.get(0).nameCompany());
+    assertTrue(response.get(0).products().isEmpty());
   }
 }
