@@ -7,6 +7,7 @@ import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeRespons
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.EmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
+import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
@@ -26,10 +27,26 @@ public class CompanyService {
   }
 
   public CompanyResponse create(CreateCompanyRequest request) {
-    Company company = new Company();
-    company.setName(request.name());
+    Company company = companyFromRequest(request);
+    validateCreateCompany(company);
     Company saved = companyRepository.save(company);
     return new CompanyResponse(saved.getId(), saved.getName());
+  }
+
+  private void validateCreateCompany(Company company) {
+    isValidName(company.getName());
+  }
+
+  private void isValidName(String name) {
+    companyRepository.findByName(name).ifPresent(c -> {
+      throw new BusinessException("Company name already exists: " + name);
+    });
+  }
+
+  private Company companyFromRequest(CreateCompanyRequest request) {
+    Company company = new Company();
+    company.setName(request.name());
+    return company;
   }
 
   public CompanyResponse getById(Long id) {
