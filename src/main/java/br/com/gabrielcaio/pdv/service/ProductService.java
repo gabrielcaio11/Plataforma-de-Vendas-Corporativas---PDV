@@ -46,9 +46,10 @@ public class ProductService {
     User user = userRepository.findByEmail(email).orElseThrow();
 
     // 2. Produto do banco
-    Product product = productRepository.findById(productId).orElseThrow(
-        () -> new BusinessException("Product not founded with id: " + productId)
-    );
+    Product product =
+        productRepository
+            .findById(productId)
+            .orElseThrow(() -> new BusinessException("Product not founded with id: " + productId));
 
     // 3. AUTORIZAÇÃO (ponto chave)
     authorizationService.checkProductOwnership(user, product);
@@ -91,7 +92,8 @@ public class ProductService {
         request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
     Pageable pageable =
-        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
+        org.springframework.data.domain.PageRequest.of(
+            request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
     Page<Product> products = productRepository.findAll(pageable);
 
     return products.map(p -> new ProductDetailsResponse(p.getId(), p.getName(), p.getPrice()));
