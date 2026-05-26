@@ -88,7 +88,8 @@ public class TransactionService {
         request.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
     Pageable pageable =
-        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
+        org.springframework.data.domain.PageRequest.of(
+            request.page(), request.size(), Sort.by(dir, validateSort(request.sort())));
 
     Page<Transaction> transactions = transactionRepository.findAll(pageable);
 
@@ -115,15 +116,11 @@ public class TransactionService {
     User user = userRepository.findByEmail(email).orElseThrow();
 
     Sort.Direction dir =
-        pageRequest.direction().equalsIgnoreCase("desc")
-            ? Sort.Direction.DESC
-            : Sort.Direction.ASC;
+        pageRequest.direction().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
     Pageable pageable =
         org.springframework.data.domain.PageRequest.of(
-            pageRequest.page(),
-            pageRequest.size(),
-            Sort.by(dir, validateSort(pageRequest.sort())));
+            pageRequest.page(), pageRequest.size(), Sort.by(dir, validateSort(pageRequest.sort())));
 
     Page<Transaction> transactions = transactionRepository.findByUserId(user.getId(), pageable);
 

@@ -49,7 +49,8 @@ public class CompanyService {
     String sort = request.sort() == null ? "name" : request.sort();
 
     Pageable pageable =
-        org.springframework.data.domain.PageRequest.of(request.page(), request.size(), Sort.by(dir, validateSort(sort)));
+        org.springframework.data.domain.PageRequest.of(
+            request.page(), request.size(), Sort.by(dir, validateSort(sort)));
 
     Page<Company> companies = companyRepository.findAll(pageable);
     return companies.map(c -> new CompanyResponse(c.getId(), c.getName()));
