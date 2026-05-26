@@ -92,43 +92,12 @@ public class AuthService {
   }
 
   private void validateRegisterRequest(RegisterRequest request) {
-    validateNameUser(request);
     validateEmailUser(request);
-    validateCompanyOfLogin(request);
-    validatePasswordUser(request);
-  }
-
-  private static void validateNameUser(RegisterRequest request) {
-    // TODO: Melhorar validação de nome (ex: não permitir números, caracteres especiais, etc)
-    if (request.name() == null || request.name().isBlank()) {
-      throw new BusinessException("Name não pode ser null ou blank");
-    }
-  }
-
-  private static void validatePasswordUser(RegisterRequest request) {
-    // TODO: Melhorar validação de senha (ex: exigir caracteres especiais, números, etc)
-    if (request.password() == null || request.password().isBlank()) {
-      throw new BusinessException("Password não pode ser null ou blank");
-    }
   }
 
   private void validateEmailUser(RegisterRequest request) {
     if (userRepository.findByEmail(request.email()).isPresent()) {
       throw new EntityExistsException("Email indisponível");
-    }
-    // TODO: Melhorar validação de email (ex: regex para validar formato, etc)
-  }
-
-  private void validateCompanyOfLogin(RegisterRequest request) {
-    UserRole role = getUserRole(request);
-
-    // Verificar se o papel é COLLABORATOR e se a empresa_id é nula
-    if (role == UserRole.COLLABORATOR && request.company_id() == null) {
-      throw new BusinessException("Colaboradores devem pertencer a uma empresa");
-    }
-    // Verificar se o papel é CONSUMER e se a empresa_id não é nula
-    if (role == UserRole.CONSUMER && request.company_id() != null) {
-      throw new BusinessException("Consumidores não devem pertencer a uma empresa");
     }
   }
 
