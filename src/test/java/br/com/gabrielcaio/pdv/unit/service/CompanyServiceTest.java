@@ -101,4 +101,44 @@ class CompanyServiceTest {
 
     assertEquals("Company name already exists: Acme", exception.getMessage());
   }
+
+  @Test
+  @DisplayName("shouldCreateCompanyWhenNameIsValid")
+  void shouldCreateCompanyWhenNameIsValid() {
+    when(companyRepository.findByName("Acme")).thenReturn(Optional.empty());
+    when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> {
+      Company company = invocation.getArgument(0);
+      company.setId(1L);
+      return company;
+    });
+
+    CreateCompanyRequest request = new CreateCompanyRequest("Acme");
+
+    CompanyResponse response = companyService.create(request);
+
+    assertEquals(1L, response.id());
+    assertEquals("Acme", response.name());
+  }
+
+  @Test
+  @DisplayName("should Throw ResourceNotFoundException When Company Not Exist In GetProductsByCompanyId")
+  void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetProductsByCompanyId() {
+    when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+    ResourceNotFoundException exception =
+        assertThrows(ResourceNotFoundException.class, () -> companyService.getProductsByCompanyId(99L));
+
+    assertEquals("Company not found with id: 99", exception.getMessage());
+
+  }
+
+  @Test
+  @DisplayName("shouldThrowResourceNotFoundExceptionWhenGetEmployeesByCompanyIdNotExist")
+  void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetEmployeesByCompanyId() {
+    when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+    ResourceNotFoundException exception =
+        assertThrows(ResourceNotFoundException.class, () -> companyService.getEmployeesByCompanyId(99L));
+
+    assertEquals("Company not found with id: 99", exception.getMessage());
+
+  }
 }

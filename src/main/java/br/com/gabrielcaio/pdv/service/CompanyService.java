@@ -33,22 +33,6 @@ public class CompanyService {
     return new CompanyResponse(saved.getId(), saved.getName());
   }
 
-  private void validateCreateCompany(Company company) {
-    isValidName(company.getName());
-  }
-
-  private void isValidName(String name) {
-    companyRepository.findByName(name).ifPresent(c -> {
-      throw new BusinessException("Company name already exists: " + name);
-    });
-  }
-
-  private Company companyFromRequest(CreateCompanyRequest request) {
-    Company company = new Company();
-    company.setName(request.name());
-    return company;
-  }
-
   public CompanyResponse getById(Long id) {
     Company company =
         companyRepository
@@ -73,21 +57,12 @@ public class CompanyService {
     return companies.map(c -> new CompanyResponse(c.getId(), c.getName()));
   }
 
-  private String validateSort(String sort) {
-
-    List<String> allowedSorts = List.of("name");
-    if (!allowedSorts.contains(sort)) {
-      throw new IllegalArgumentException("Invalid sort field: " + sort);
-    }
-    return sort;
-  }
-
   public List<CompanyWithEmployeeResponse> getEmployeesByCompanyId(Long companyId) {
     Company company =
         companyRepository
             .findById(companyId)
             .orElseThrow(
-                () -> new IllegalArgumentException("Company not found with id: " + companyId));
+                () -> new ResourceNotFoundException("Company not found with id: " + companyId));
     List<EmployeeResponse> employeeResponses =
         company.getUsers().stream().map(u -> new EmployeeResponse(u.getId(), u.getName())).toList();
     return List.of(
@@ -99,7 +74,7 @@ public class CompanyService {
         companyRepository
             .findById(companyId)
             .orElseThrow(
-                () -> new IllegalArgumentException("Company not found with id: " + companyId));
+                () -> new ResourceNotFoundException("Company not found with id: " + companyId));
 
     List<ProductResponse> productResponses =
         company.getProducts().stream()
@@ -107,5 +82,30 @@ public class CompanyService {
             .toList();
     return List.of(
         new CompanyWithProductsResponse(company.getId(), company.getName(), productResponses));
+  }
+
+  private void validateCreateCompany(Company company) {
+    isValidName(company.getName());
+  }
+
+  private String validateSort(String sort) {
+
+    List<String> allowedSorts = List.of("name");
+    if (!allowedSorts.contains(sort)) {
+      throw new IllegalArgumentException("Invalid sort field: " + sort);
+    }
+    return sort;
+  }
+
+  private void isValidName(String name) {
+    companyRepository.findByName(name).ifPresent(c -> {
+      throw new BusinessException("Company name already exists: " + name);
+    });
+  }
+
+  private Company companyFromRequest(CreateCompanyRequest request) {
+    Company company = new Company();
+    company.setName(request.name());
+    return company;
   }
 }
