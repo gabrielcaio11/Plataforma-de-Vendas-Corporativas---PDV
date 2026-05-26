@@ -46,7 +46,8 @@ class ProductServiceTest {
     authorizationService = mock(AuthorizationService.class);
     companyRepository = mock(CompanyRepository.class);
     productService =
-        new ProductService(productRepository, userRepository, authorizationService, companyRepository);
+        new ProductService(
+            productRepository, userRepository, authorizationService, companyRepository);
   }
 
   @Test
@@ -147,7 +148,8 @@ class ProductServiceTest {
     existing.setName("Produto antigo");
     existing.setPrice(new BigDecimal("4.00"));
 
-    UpdateProductRequest request = new UpdateProductRequest("Produto novo", new BigDecimal("8.50"), 5, 1L);
+    UpdateProductRequest request =
+        new UpdateProductRequest("Produto novo", new BigDecimal("8.50"), 5, 1L);
 
     when(userRepository.findByEmail("colab@test.com")).thenReturn(Optional.of(user));
     when(productRepository.findById(7L)).thenReturn(Optional.of(existing));
@@ -170,7 +172,8 @@ class ProductServiceTest {
   void shouldThrowBusinessExceptionWhenProductDoesNotExist() {
     User user = new User();
     user.setEmail("colab@test.com");
-    UpdateProductRequest request = new UpdateProductRequest("Nome", new BigDecimal("10.00"), null, null);
+    UpdateProductRequest request =
+        new UpdateProductRequest("Nome", new BigDecimal("10.00"), null, null);
 
     when(userRepository.findByEmail("colab@test.com")).thenReturn(Optional.of(user));
     when(productRepository.findById(99L)).thenReturn(Optional.empty());
@@ -182,7 +185,8 @@ class ProductServiceTest {
           assertThrows(BusinessException.class, () -> productService.update(99L, request));
 
       assertEquals("Product not founded with id: 99", exception.getMessage());
-      verify(authorizationService, never()).checkProductOwnership(any(User.class), any(Product.class));
+      verify(authorizationService, never())
+          .checkProductOwnership(any(User.class), any(Product.class));
     }
   }
 
@@ -195,7 +199,8 @@ class ProductServiceTest {
     Product existing = new Product();
     existing.setId(7L);
 
-    UpdateProductRequest request = new UpdateProductRequest("Nome", new BigDecimal("10.00"), null, null);
+    UpdateProductRequest request =
+        new UpdateProductRequest("Nome", new BigDecimal("10.00"), null, null);
 
     when(userRepository.findByEmail("colab@test.com")).thenReturn(Optional.of(user));
     when(productRepository.findById(7L)).thenReturn(Optional.of(existing));

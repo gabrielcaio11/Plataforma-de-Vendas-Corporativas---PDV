@@ -39,7 +39,8 @@ class TransactionServiceTest {
     userRepository = mock(UserRepository.class);
     productRepository = mock(ProductRepository.class);
     transactionRepository = mock(TransactionRepository.class);
-    transactionService = new TransactionService(userRepository, productRepository, transactionRepository);
+    transactionService =
+        new TransactionService(userRepository, productRepository, transactionRepository);
   }
 
   @Test
@@ -110,7 +111,8 @@ class TransactionServiceTest {
     try (MockedStatic<SecurityUtils> securityUtils = mockStatic(SecurityUtils.class)) {
       securityUtils.when(SecurityUtils::getLoggedUserEmail).thenReturn("ghost@test.com");
 
-      assertThrows(java.util.NoSuchElementException.class, () -> transactionService.create(request));
+      assertThrows(
+          java.util.NoSuchElementException.class, () -> transactionService.create(request));
 
       verify(productRepository, never()).findById(any(Long.class));
       verify(transactionRepository, never()).save(any(Transaction.class));
