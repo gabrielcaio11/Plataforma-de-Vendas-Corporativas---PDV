@@ -101,4 +101,22 @@ class CompanyServiceTest {
 
     assertEquals("Company name already exists: Acme", exception.getMessage());
   }
+
+  @Test
+  @DisplayName("shouldCreateCompanyWhenNameIsValid")
+  void shouldCreateCompanyWhenNameIsValid() {
+    when(companyRepository.findByName("Acme")).thenReturn(Optional.empty());
+    when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> {
+      Company company = invocation.getArgument(0);
+      company.setId(1L);
+      return company;
+    });
+
+    CreateCompanyRequest request = new CreateCompanyRequest("Acme");
+
+    CompanyResponse response = companyService.create(request);
+
+    assertEquals(1L, response.id());
+    assertEquals("Acme", response.name());
+  }
 }
