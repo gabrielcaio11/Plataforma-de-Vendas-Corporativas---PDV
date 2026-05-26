@@ -18,6 +18,7 @@ import br.com.gabrielcaio.pdv.security.JwtService;
 import br.com.gabrielcaio.pdv.security.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -36,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
   JwtService.class,
   CustomUserDetailsService.class
 })
+@Tag("slice")
 class AuthControllerWebMvcTest {
 
   @Autowired private MockMvc mockMvc;

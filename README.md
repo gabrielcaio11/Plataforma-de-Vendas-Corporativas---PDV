@@ -170,6 +170,40 @@ Controller → Service → Repository
 
 ---
 
+## Testes
+
+O projeto separa testes rápidos (unitários e slice) dos testes com infraestrutura real (integração e E2E).
+
+| Comando | O que executa | Quando usar |
+|---------|---------------|-------------|
+| `mvn test` | Unitários (`*Test`) e slice (`@WebMvcTest`) | Dia a dia, feedback rápido |
+| `mvn verify` | Integração (`*IT`) e E2E (`*E2E`) com Testcontainers | Antes de considerar pronto |
+
+### Convenções
+
+| Tipo | Arquivo | Tag JUnit |
+|------|---------|-----------|
+| Unitário (service, DTO) | `*Test.java` | `@Tag("unit")` |
+| Slice (controller) | `*Test.java` em `controller/` | `@Tag("slice")` |
+| Integração | `*IT.java` em `integration/` | `@Tag("integration")` |
+| E2E | `*E2E.java` em `e2e/` | `@Tag("e2e")` |
+
+### Comandos úteis
+
+```bash
+# Suite rápida (sem Postgres/Testcontainers)
+mvn test
+
+# Suite completa (requer Docker para Testcontainers)
+mvn verify
+
+# Um teste específico
+mvn test -Dtest=ProductServiceTest
+mvn verify -Dit.test=AuthLoginFlowIT
+```
+
+---
+
 ## Objetivo do projeto
 
 Este projeto foi desenvolvido com foco em:
