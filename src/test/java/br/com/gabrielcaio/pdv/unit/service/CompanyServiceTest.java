@@ -164,4 +164,22 @@ class CompanyServiceTest {
     assertEquals("Company not found with id: 99", exception.getMessage());
 
   }
+
+  @Test
+  @DisplayName("shouldReturnEmptyProductListWhenCompanyHasNoProducts")
+  void shouldReturnEmptyProductListWhenCompanyHasNoProducts() {
+    Company company = new Company();
+    company.setId(1L);
+    company.setName("Acme");
+    company.setProducts(List.of());
+
+    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+    List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+
+    assertEquals(1, response.size());
+    assertEquals(1L, response.get(0).id());
+    assertEquals("Acme", response.get(0).nameCompany());
+    assertTrue(response.get(0).products().isEmpty());
+  }
 }
