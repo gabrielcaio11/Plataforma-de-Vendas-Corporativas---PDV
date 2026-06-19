@@ -2,14 +2,18 @@ package br.com.gabrielcaio.pdv.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -31,14 +35,25 @@ public class User {
   @Column(nullable = false)
   private String password;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private UserRole role;
-
-  // Pode ser null (consumidor)
   @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "tb_user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<Role> roles = new HashSet<>();
+
+  public void addRole(Role role) {
+    this.roles.add(role);
+  }
+
+  public void removeRole(Role role) {
+    this.roles.remove(role);
+  }
 
   public User() {
   }
@@ -89,12 +104,8 @@ public class User {
     this.password = password;
   }
 
-  public UserRole getRole() {
-    return role;
-  }
-
-  public void setRole(UserRole role) {
-    this.role = role;
+  public Set<Role> getRoles() {
+    return Collections.unmodifiableSet(roles);
   }
 
   public Company getCompany() {
@@ -103,5 +114,9 @@ public class User {
 
   public void setCompany(Company company) {
     this.company = company;
+  }
+
+  public void setRole(UserRole userRole) {
+    this.roles.add(new Role(userRole.name()));
   }
 }

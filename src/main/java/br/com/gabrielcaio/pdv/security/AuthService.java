@@ -5,6 +5,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.EntityExistsException;
 import br.com.gabrielcaio.pdv.domain.Company;
+import br.com.gabrielcaio.pdv.domain.Role;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
@@ -77,7 +78,7 @@ public class AuthService {
     user.setName(request.name());
     user.setEmail(request.email());
     user.setPassword(passwordEncoder.encode(request.password()));
-    user.setRole(getUserRole(request));
+    user.addRole(new Role(getUserRole(request).name()));
     user.setCompany(getCompanyFromRequest(request));
     return user;
   }

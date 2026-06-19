@@ -2,7 +2,6 @@ package br.com.gabrielcaio.pdv.security;
 
 import br.com.gabrielcaio.pdv.domain.User;
 import java.util.Collection;
-import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +20,9 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+    return user.getRoles().stream()
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+        .toList();
   }
 
   @Override
