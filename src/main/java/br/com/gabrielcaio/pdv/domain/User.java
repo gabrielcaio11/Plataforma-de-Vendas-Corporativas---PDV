@@ -19,6 +19,9 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false, unique = true, name = "cpf")
+  private CPF cpf;
+
   @Column(nullable = false)
   private String name;
 
@@ -44,6 +47,20 @@ public class User {
     return id;
   }
 
+  public String getCpf() {
+    return cpf.getFormatted();
+  }
+
+  public void setCpf(CPF cpf) {
+    if (this.cpf == null) {
+      this.cpf = cpf;
+    }
+    throw new IllegalStateException("CPF não pode ser alterado");
+  }
+
+  public void setCpf(String cpf){
+
+  }
   public void setId(Long id) {
     this.id = id;
   }
