@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -48,16 +49,20 @@ class TransactionRepositoryIT {
   private EntityManager entityManager;
 
   @Test
+  @Transactional
   void findByUserId_whenExists_returnsPage() {
     var user = TestDataFactory.createUserConsumer();
     var company = TestDataFactory.createCompany();
-    var product = TestDataFactory.createProduct();
-    var transaction = TestDataFactory.createTransaction(user, product, 1);
 
     entityManager.persist(user);
-    entityManager.flush();
+    entityManager.persist(company);
 
-    transaction = TestDataFactory.createTransaction(user, product, 1);
+    var product = TestDataFactory.createProduct();
+    product.setCompany(company);
+    entityManager.persist(product);
+
+
+    var transaction = TestDataFactory.createTransaction(user, product, 1);
     entityManager.persist(transaction);
     entityManager.flush();
 
@@ -78,6 +83,7 @@ class TransactionRepositoryIT {
 
     static User createUserConsumer() {
       var user = new User();
+      user.setCpf("12345678909");
       user.setName("John Doe");
       user.setEmail("john@gmail.com");
       user.setPassword("password");
@@ -98,8 +104,10 @@ class TransactionRepositoryIT {
 
     static Product createProduct() {
       Product product = new Product();
+      product.setDescription("A useful widget");
       product.setName("Widget");
       product.setPrice(BigDecimal.valueOf(9.99));
+      product.setStock(100);
       return product;
     }
 
