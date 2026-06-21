@@ -106,6 +106,15 @@ public class ControllerExeceptionHandler {
         request);
   }
 
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ProblemDetail handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+    return buildProblemDetail(
+        HttpStatus.BAD_REQUEST,
+        ErrorType.BUSINESS_RULE_VIOLATION,
+        e.getMessage(),
+        request);
+  }
+
   private ProblemDetail buildProblemDetail(
       HttpStatus status, ErrorType errorType, String detail, HttpServletRequest request) {
     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, detail);

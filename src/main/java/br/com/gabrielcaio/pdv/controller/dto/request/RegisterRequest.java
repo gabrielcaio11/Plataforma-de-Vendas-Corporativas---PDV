@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
+    @NotBlank(message = "CPF não pode ser blank") String cpf,
     @NotBlank(message = "Name não pode ser blank") String name,
     @NotBlank(message = "Email não pode ser blank") @Email String email,
     @NotBlank(message = "Password não pode ser blank")

@@ -89,7 +89,7 @@ class AuthLoginFlowIT {
     String password = "senha1234";
 
     RegisterRequest registerRequest =
-        new RegisterRequest("Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
+        new RegisterRequest("09300499009","Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
 
     HttpHeaders json = new HttpHeaders();
     json.setContentType(MediaType.APPLICATION_JSON);

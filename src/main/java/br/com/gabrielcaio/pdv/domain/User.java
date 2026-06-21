@@ -24,7 +24,7 @@ public class User {
   private Long id;
 
   @Column(nullable = false, unique = true, name = "cpf")
-  private CPF cpf;
+  private String cpf;
 
   @Column(nullable = false)
   private String name;
@@ -39,7 +39,7 @@ public class User {
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER,cascade = {jakarta.persistence.CascadeType.PERSIST, jakarta.persistence.CascadeType.MERGE})
   @JoinTable(
       name = "tb_user_role",
       joinColumns = @JoinColumn(name = "user_id"),
@@ -63,19 +63,18 @@ public class User {
   }
 
   public String getCpf() {
-    return cpf.getFormatted();
+    CPF cpfFromString = new CPF(this.cpf);
+    return cpfFromString.getFormatted();
   }
 
-  public void setCpf(CPF cpf) {
+  public void setCpf(String cpf) {
     if (this.cpf == null) {
-      this.cpf = cpf;
+      this.cpf = new CPF(cpf).value();
+      return;
     }
     throw new IllegalStateException("CPF não pode ser alterado");
   }
 
-  public void setCpf(String cpf){
-
-  }
   public void setId(Long id) {
     this.id = id;
   }

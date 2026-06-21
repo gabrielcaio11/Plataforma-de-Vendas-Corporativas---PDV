@@ -76,6 +76,8 @@ class UserRepositoryIT {
 
     static User createUserAdmin(Company company) {
       var user = new User();
+      user.setCpf("12345678909");
+      user.setCompany(company);
       user.setName("John Doe");
       user.setEmail("john@gmail.com");
       user.setPassword("password");
