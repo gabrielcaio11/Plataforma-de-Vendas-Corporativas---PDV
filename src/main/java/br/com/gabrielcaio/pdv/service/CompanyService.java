@@ -17,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+/**
+* @see {@link br.com.gabrielcaio.pdv.unit.service.CompanyServiceTest (unit test)}
+*/
 @Service
 public class CompanyService {
 
