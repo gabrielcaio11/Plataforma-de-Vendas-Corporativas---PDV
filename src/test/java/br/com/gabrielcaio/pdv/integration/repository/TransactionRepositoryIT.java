@@ -12,6 +12,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,7 @@ class TransactionRepositoryIT {
   private EntityManager entityManager;
 
   @Test
+  @DisplayName("findByUserId - should return page of transactions when user has transactions")
   @Transactional
   void findByUserId_whenExists_returnsPage() {
     var user = TestDataFactory.createUserConsumer();
@@ -71,6 +74,19 @@ class TransactionRepositoryIT {
     assertThat(page).isNotEmpty();
     assertThat(page.getContent()).hasSize(1);
     assertThat(page.getContent().get(0).getId()).isEqualTo(transaction.getId());
+  }
+
+  @Test
+  @DisplayName("findByUserId - should return empty page when user has no transactions")
+  @Transactional
+  void findByUserId_whenNoTransactions_returnsEmptyPage() {
+    // sem empresa, apenas para ter um ID
+    var user = TestDataFactory.defaultUser(null);
+    entityManager.persist(user);
+    entityManager.flush();
+
+    var page = transactionRepository.findByUserId(user.getId(), PageRequest.of(0, 10));
+    assertThat(page).isEmpty();
   }
 
   private static class TestDataFactory {
@@ -109,6 +125,28 @@ class TransactionRepositoryIT {
       product.setPrice(BigDecimal.valueOf(9.99));
       product.setStock(100);
       return product;
+    }
+
+    public static User defaultUser(Company company) {
+      return createUser(
+          UUID.randomUUID().toString().substring(0, 11),
+          "John Doe",
+          "user-" + UUID.randomUUID() + "@test.com",
+          UserRole.CONSUMER,
+          company
+      );
+    }
+
+    public static User createUser(String cpf, String name, String email, UserRole role,
+        Company company) {
+      User u = new User();
+      u.setCpf(cpf);
+      u.setName(name);
+      u.setEmail(email);
+      u.setPassword("password");
+      u.setRole(role);
+      u.setCompany(company);
+      return u;
     }
 
     static Pageable createPageable() {
