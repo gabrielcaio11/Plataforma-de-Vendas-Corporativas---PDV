@@ -1,8 +1,9 @@
-package br.com.gabrielcaio.pdv.controller.dto.request;
+package br.com.gabrielcaio.pdv.unit.controller.dto.request;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import br.com.gabrielcaio.pdv.controller.dto.request.TransactionRequest;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;

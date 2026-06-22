@@ -1,4 +1,4 @@
-package br.com.gabrielcaio.pdv.integration;
+package br.com.gabrielcaio.pdv.integration.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

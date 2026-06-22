@@ -1,4 +1,4 @@
-package br.com.gabrielcaio.pdv.controller;
+package br.com.gabrielcaio.pdv.unit.controller;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.com.gabrielcaio.pdv.controller.CompanyController;
 import br.com.gabrielcaio.pdv.controller.dto.request.CreateCompanyRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;

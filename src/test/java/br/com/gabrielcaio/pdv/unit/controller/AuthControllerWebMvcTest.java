@@ -1,4 +1,4 @@
-package br.com.gabrielcaio.pdv.controller;
+package br.com.gabrielcaio.pdv.unit.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.com.gabrielcaio.pdv.controller.AuthController;
 import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
