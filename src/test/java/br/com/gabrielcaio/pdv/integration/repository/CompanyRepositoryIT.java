@@ -7,6 +7,7 @@ import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.repository.CompanyRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -78,9 +79,10 @@ class CompanyRepositoryIT {
     c2.setName("Unique");
 
     assertThatThrownBy(() -> {
-          entityManager.persist(c2);
-          entityManager.flush();
-        })
-        .isInstanceOfAny(DataIntegrityViolationException.class, ConstraintViolationException.class);
+      entityManager.persist(c2);
+      entityManager.flush();
+    })
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("duplicate key");
   }
 }
