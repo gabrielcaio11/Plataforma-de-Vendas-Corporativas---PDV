@@ -8,6 +8,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -85,7 +86,7 @@ class AuthLoginFlowIT {
   @DisplayName("Registering and logging in should return a token that can access protected routes")
   void login_thenBearerAccessesProtectedRoute() {
 
-    String email = "flow-" + System.nanoTime() + "@integration.test";
+    String email = "flow-" + UUID.randomUUID() + "@integration.test";
     String password = "senha1234";
 
     RegisterRequest registerRequest =
@@ -127,7 +128,7 @@ class AuthLoginFlowIT {
   @DisplayName("Logging in with invalid credentials should return 401 Unauthorized")
   void login_withInvalidCredentials_returnsUnauthorized() {
     LoginRequest loginRequest =
-        new LoginRequest("nonexistent-" + System.nanoTime() + "@integration.test", "wrongpassword");
+        new LoginRequest("nonexistent-" + UUID.randomUUID() + "@integration.test", "wrongpassword");
 
     HttpHeaders json = new HttpHeaders();
     json.setContentType(MediaType.APPLICATION_JSON);
