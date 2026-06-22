@@ -1,7 +1,6 @@
 package br.com.gabrielcaio.pdv.integration.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.domain.User;
@@ -61,9 +60,16 @@ class UserRepositoryIT {
 
     var found = companyRepository.findByName(company.getName());
 
-    assertTrue(found.isPresent());
-    assertEquals(company.getId(), found.get().getId());
+    assertThat(found).isPresent();
+    assertThat(found.get().getId()).isEqualTo(user.getId());
 
+  }
+
+  @Test
+  @DisplayName("findByEmail - should return empty when email does not exist")
+  @Transactional
+  void findByEmail_whenNotExists_returnsEmpty() {
+    assertThat(userRepository.findByEmail("missing@test.com")).isEmpty();
   }
 
   private static class TestDataFactory {
