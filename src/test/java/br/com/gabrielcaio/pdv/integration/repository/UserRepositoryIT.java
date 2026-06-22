@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
-import br.com.gabrielcaio.pdv.repository.CompanyRepository;
+import br.com.gabrielcaio.pdv.integration.base.BaseRepositoryTest;
+import br.com.gabrielcaio.pdv.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +39,7 @@ class UserRepositoryIT {
   }
 
   @Autowired
-  private CompanyRepository companyRepository;
+  private UserRepository userRepository;
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -58,7 +59,7 @@ class UserRepositoryIT {
     entityManager.persist(user);
     entityManager.flush();
 
-    var found = companyRepository.findByName(company.getName());
+    var found = userRepository.findByEmail(user.getEmail());
 
     assertThat(found).isPresent();
     assertThat(found.get().getId()).isEqualTo(user.getId());
