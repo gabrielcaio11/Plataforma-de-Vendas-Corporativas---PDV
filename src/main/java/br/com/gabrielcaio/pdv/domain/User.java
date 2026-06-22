@@ -39,12 +39,13 @@ public class User {
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @ManyToMany(fetch = FetchType.EAGER,cascade = {jakarta.persistence.CascadeType.PERSIST, jakarta.persistence.CascadeType.MERGE})
+  @ManyToMany(
+      fetch = FetchType.EAGER,
+      cascade = {jakarta.persistence.CascadeType.PERSIST, jakarta.persistence.CascadeType.MERGE})
   @JoinTable(
       name = "tb_user_role",
       joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id")
-  )
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
 
   public void addRole(Role role) {
@@ -55,8 +56,7 @@ public class User {
     this.roles.remove(role);
   }
 
-  public User() {
-  }
+  public User() {}
 
   public Long getId() {
     return id;

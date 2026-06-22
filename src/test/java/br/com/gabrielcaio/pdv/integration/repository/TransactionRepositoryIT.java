@@ -2,11 +2,13 @@ package br.com.gabrielcaio.pdv.integration.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import br.com.gabrielcaio.pdv.domain.CPF;
 import br.com.gabrielcaio.pdv.domain.Company;
 import br.com.gabrielcaio.pdv.domain.Product;
 import br.com.gabrielcaio.pdv.domain.Transaction;
 import br.com.gabrielcaio.pdv.domain.User;
 import br.com.gabrielcaio.pdv.domain.UserRole;
+import br.com.gabrielcaio.pdv.integration.base.BaseRepositoryTest;
 import br.com.gabrielcaio.pdv.repository.TransactionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,38 +19,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Tag("integration")
-@SpringBootTest
-@ActiveProfiles("test")
-@Testcontainers
-class TransactionRepositoryIT {
+class TransactionRepositoryIT extends BaseRepositoryTest {
 
-  @Container
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+  @Autowired private TransactionRepository transactionRepository;
 
-  @DynamicPropertySource
-  static void registerDatasource(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
-  }
-
-  @Autowired
-  private TransactionRepository transactionRepository;
-
-  @PersistenceContext
-  private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
   @Test
   @DisplayName("findByUserId - should return page of transactions when user has transactions")
@@ -63,7 +43,6 @@ class TransactionRepositoryIT {
     var product = TestDataFactory.createProduct();
     product.setCompany(company);
     entityManager.persist(product);
-
 
     var transaction = TestDataFactory.createTransaction(user, product, 1);
     entityManager.persist(transaction);
@@ -115,7 +94,6 @@ class TransactionRepositoryIT {
       transaction.setQuantity(quantity);
       transaction.setCreatedAt(LocalDateTime.now());
       return transaction;
-
     }
 
     static Product createProduct() {
@@ -129,16 +107,19 @@ class TransactionRepositoryIT {
 
     public static User defaultUser(Company company) {
       return createUser(
-          UUID.randomUUID().toString().substring(0, 11),
+          getCpf(),
           "John Doe",
           "user-" + UUID.randomUUID() + "@test.com",
           UserRole.CONSUMER,
-          company
-      );
+          company);
     }
 
-    public static User createUser(String cpf, String name, String email, UserRole role,
-        Company company) {
+    private static String getCpf() {
+      return CPF.random().value();
+    }
+
+    public static User createUser(
+        String cpf, String name, String email, UserRole role, Company company) {
       User u = new User();
       u.setCpf(cpf);
       u.setName(name);

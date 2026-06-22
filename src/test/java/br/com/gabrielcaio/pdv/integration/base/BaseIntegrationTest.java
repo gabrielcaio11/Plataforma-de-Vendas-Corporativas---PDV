@@ -5,6 +5,4 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public abstract class BaseIntegrationTest extends BaseTestContainers {
-
-}
+public abstract class BaseIntegrationTest extends BaseTestContainers {}

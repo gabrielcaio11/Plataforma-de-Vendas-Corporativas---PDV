@@ -13,36 +13,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Tag("integration")
-@SpringBootTest
-@ActiveProfiles("test")
-@Testcontainers
-class UserRepositoryIT {
+class UserRepositoryIT extends BaseRepositoryTest {
 
-  @Container
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+  @Autowired private UserRepository userRepository;
 
-  @DynamicPropertySource
-  static void registerDatasource(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
-  }
-
-  @Autowired
-  private UserRepository userRepository;
-
-  @PersistenceContext
-  private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
   @Test
   @DisplayName("findByEmail - should return user when email exists")
@@ -63,7 +41,6 @@ class UserRepositoryIT {
 
     assertThat(found).isPresent();
     assertThat(found.get().getId()).isEqualTo(user.getId());
-
   }
 
   @Test

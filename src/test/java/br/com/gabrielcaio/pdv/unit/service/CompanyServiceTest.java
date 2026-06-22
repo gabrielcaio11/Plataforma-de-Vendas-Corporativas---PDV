@@ -115,11 +115,13 @@ class CompanyServiceTest {
   @DisplayName("shouldCreateCompanyWhenNameIsValid")
   void shouldCreateCompanyWhenNameIsValid() {
     when(companyRepository.findByName("Acme")).thenReturn(Optional.empty());
-    when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> {
-      Company company = invocation.getArgument(0);
-      company.setId(1L);
-      return company;
-    });
+    when(companyRepository.save(any(Company.class)))
+        .thenAnswer(
+            invocation -> {
+              Company company = invocation.getArgument(0);
+              company.setId(1L);
+              return company;
+            });
 
     CreateCompanyRequest request = new CreateCompanyRequest("Acme");
 
@@ -130,14 +132,15 @@ class CompanyServiceTest {
   }
 
   @Test
-  @DisplayName("should Throw ResourceNotFoundException When Company Not Exist In GetProductsByCompanyId")
+  @DisplayName(
+      "should Throw ResourceNotFoundException When Company Not Exist In GetProductsByCompanyId")
   void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetProductsByCompanyId() {
     when(companyRepository.findById(99L)).thenReturn(Optional.empty());
     ResourceNotFoundException exception =
-        assertThrows(ResourceNotFoundException.class, () -> companyService.getProductsByCompanyId(99L));
+        assertThrows(
+            ResourceNotFoundException.class, () -> companyService.getProductsByCompanyId(99L));
 
     assertEquals("Company not found with id: 99", exception.getMessage());
-
   }
 
   @Test
@@ -156,7 +159,6 @@ class CompanyServiceTest {
     assertEquals(1L, response.get(0).id());
     assertEquals("Acme", response.get(0).nameCompany());
     assertTrue(response.get(0).employees().isEmpty());
-
   }
 
   @Test
@@ -180,17 +182,12 @@ class CompanyServiceTest {
     Company company = new Company();
     company.setId(1L);
     company.setName("Acme");
-    company.setUsers(List.of(
-        user1, user2
-    ));
+    company.setUsers(List.of(user1, user2));
 
     user1.setCompany(company);
     user2.setCompany(company);
 
-
-    company.setUsers(List.of(
-        user1, user2
-    ));
+    company.setUsers(List.of(user1, user2));
 
     when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
@@ -210,10 +207,10 @@ class CompanyServiceTest {
   void shouldThrowResourceNotFoundExceptionWhenCompanyNotExistInGetEmployeesByCompanyId() {
     when(companyRepository.findById(99L)).thenReturn(Optional.empty());
     ResourceNotFoundException exception =
-        assertThrows(ResourceNotFoundException.class, () -> companyService.getEmployeesByCompanyId(99L));
+        assertThrows(
+            ResourceNotFoundException.class, () -> companyService.getEmployeesByCompanyId(99L));
 
     assertEquals("Company not found with id: 99", exception.getMessage());
-
   }
 
   @Test
@@ -237,35 +234,33 @@ class CompanyServiceTest {
   @Test
   @DisplayName("shouldReturnProductListWhenCompanyHasProducts")
   void shouldReturnProductListWhenCompanyHasProducts() {
-      Company company = new Company();
-      company.setId(1L);
-      company.setName("Acme");
+    Company company = new Company();
+    company.setId(1L);
+    company.setName("Acme");
 
-      Product product1 = new Product();
-      product1.setName("Product 1");
-      product1.setPrice(BigDecimal.valueOf(10.0));
-      product1.setCompany(company);
+    Product product1 = new Product();
+    product1.setName("Product 1");
+    product1.setPrice(BigDecimal.valueOf(10.0));
+    product1.setCompany(company);
 
-      Product product2 = new Product();
-      product2.setName("Product 2");
-      product2.setPrice(BigDecimal.valueOf(20.0));
-      product2.setCompany(company);
+    Product product2 = new Product();
+    product2.setName("Product 2");
+    product2.setPrice(BigDecimal.valueOf(20.0));
+    product2.setCompany(company);
 
-      company.setProducts(List.of(
-          product1, product2
-      ));
+    company.setProducts(List.of(product1, product2));
 
-      when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
-      List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+    List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
 
-      assertEquals(1, response.size());
-      assertEquals(1L, response.get(0).id());
-      assertEquals("Acme", response.get(0).nameCompany());
-      assertEquals(2, response.get(0).products().size());
-      assertEquals("Product 1", response.get(0).products().get(0).name());
-      assertEquals(BigDecimal.valueOf(10.0), response.get(0).products().get(0).price());
-      assertEquals("Product 2", response.get(0).products().get(1).name());
-      assertEquals(BigDecimal.valueOf(20.0), response.get(0).products().get(1).price());
+    assertEquals(1, response.size());
+    assertEquals(1L, response.get(0).id());
+    assertEquals("Acme", response.get(0).nameCompany());
+    assertEquals(2, response.get(0).products().size());
+    assertEquals("Product 1", response.get(0).products().get(0).name());
+    assertEquals(BigDecimal.valueOf(10.0), response.get(0).products().get(0).price());
+    assertEquals("Product 2", response.get(0).products().get(1).name());
+    assertEquals(BigDecimal.valueOf(20.0), response.get(0).products().get(1).price());
   }
 }

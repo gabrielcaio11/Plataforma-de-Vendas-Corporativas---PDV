@@ -6,6 +6,7 @@ import br.com.gabrielcaio.pdv.controller.dto.request.LoginRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.RegisterRequest;
 import br.com.gabrielcaio.pdv.controller.dto.request.UserRoleRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.AuthResponse;
+import br.com.gabrielcaio.pdv.integration.base.BaseIntegrationTest;
 import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,32 +24,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Tag("integration")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@Testcontainers
-class AuthLoginFlowIT {
-
-  @Container
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
-
-  @DynamicPropertySource
-  static void registerDatasource(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
-  }
-
-  @LocalServerPort private int port;
+class AuthLoginFlowIT extends BaseIntegrationTest {
 
   private RestTemplate restTemplate;
 
@@ -68,6 +47,8 @@ class AuthLoginFlowIT {
               throws IOException {}
         });
   }
+
+  @LocalServerPort private int port;
 
   private String url(String pathAndQuery) {
     return "http://127.0.0.1:" + port + pathAndQuery;
@@ -90,7 +71,8 @@ class AuthLoginFlowIT {
     String password = "senha1234";
 
     RegisterRequest registerRequest =
-        new RegisterRequest("09300499009","Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
+        new RegisterRequest(
+            "09300499009", "Fluxo Login", email, password, new UserRoleRequest("CONSUMER"), null);
 
     HttpHeaders json = new HttpHeaders();
     json.setContentType(MediaType.APPLICATION_JSON);

@@ -71,8 +71,13 @@ class AuthControllerWebMvcTest {
     when(authService.register(any(RegisterRequest.class))).thenReturn("token-novo");
 
     RegisterRequest body =
-        new RegisterRequest("12345678902",
-            "Novo", "novo@test.com", "senha1234", new UserRoleRequest("CONSUMER"), null);
+        new RegisterRequest(
+            "12345678902",
+            "Novo",
+            "novo@test.com",
+            "senha1234",
+            new UserRoleRequest("CONSUMER"),
+            null);
 
     mockMvc
         .perform(

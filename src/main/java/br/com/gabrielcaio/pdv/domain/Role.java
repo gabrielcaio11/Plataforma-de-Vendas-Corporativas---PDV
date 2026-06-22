@@ -18,8 +18,7 @@ public class Role {
   @Column(unique = true, nullable = false)
   private UserRole name;
 
-  public Role() {
-  }
+  public Role() {}
 
   public Role(String name) {
     try {

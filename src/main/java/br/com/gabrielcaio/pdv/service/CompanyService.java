@@ -18,8 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
-* @see {@link br.com.gabrielcaio.pdv.unit.service.CompanyServiceTest (unit test)}
-*/
+ * @see {@link br.com.gabrielcaio.pdv.unit.service.CompanyServiceTest (unit test)}
+ */
 @Service
 public class CompanyService {
 
@@ -101,9 +101,12 @@ public class CompanyService {
   }
 
   private void isValidName(String name) {
-    companyRepository.findByName(name).ifPresent(c -> {
-      throw new BusinessException("Company name already exists: " + name);
-    });
+    companyRepository
+        .findByName(name)
+        .ifPresent(
+            c -> {
+              throw new BusinessException("Company name already exists: " + name);
+            });
   }
 
   private Company companyFromRequest(CreateCompanyRequest request) {

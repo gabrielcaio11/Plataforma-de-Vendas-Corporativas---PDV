@@ -107,12 +107,10 @@ public class ControllerExeceptionHandler {
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
-  public ProblemDetail handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+  public ProblemDetail handleIllegalArgumentException(
+      IllegalArgumentException e, HttpServletRequest request) {
     return buildProblemDetail(
-        HttpStatus.BAD_REQUEST,
-        ErrorType.BUSINESS_RULE_VIOLATION,
-        e.getMessage(),
-        request);
+        HttpStatus.BAD_REQUEST, ErrorType.BUSINESS_RULE_VIOLATION, e.getMessage(), request);
   }
 
   private ProblemDetail buildProblemDetail(

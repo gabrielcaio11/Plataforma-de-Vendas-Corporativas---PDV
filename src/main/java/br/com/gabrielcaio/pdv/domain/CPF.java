@@ -1,10 +1,9 @@
 package br.com.gabrielcaio.pdv.domain;
 
 import java.util.Objects;
+import java.util.UUID;
 
-/**
- * Value Object que representa um CPF limpo e validado.
- */
+/** Value Object que representa um CPF limpo e validado. */
 public record CPF(String value) {
 
   // O construtor compacto do Record serve para validação e normalização
@@ -20,8 +19,30 @@ public record CPF(String value) {
   }
 
   /**
-   * Retorna o CPF formatado no padrão (###.###.###-##).
+   * Método de fábrica que gera uma instância de CPF com um valor aleatório e válido baseado em um
+   * UUID.
    */
+  public static CPF random() {
+    // 1. Gera um UUID aleatório e extrai apenas os números
+    String apenasNumeros = UUID.randomUUID().toString().replaceAll("\\D", "");
+
+    // 2. Garante que temos pelo menos 9 dígitos (preenche com zero se necessário)
+    if (apenasNumeros.length() < 9) {
+      apenasNumeros = String.format("%-9s", apenasNumeros).replace(' ', '0');
+    }
+
+    // 3. Pega os primeiros 9 dígitos para a base do CPF
+    String baseCpf = apenasNumeros.substring(0, 9);
+
+    // 4. Calcula os dois dígitos verificadores
+    int d1 = calcularDigito(baseCpf, 10);
+    int d2 = calcularDigito(baseCpf + d1, 11);
+
+    // 5. Instancia e retorna o Record CPF
+    return new CPF(baseCpf + d1 + d2);
+  }
+
+  /** Retorna o CPF formatado no padrão (###.###.###-##). */
   public String getFormatted() {
     return value.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
   }
@@ -55,5 +76,15 @@ public record CPF(String value) {
     }
   }
 
-  // O Java Record já sobrescreve automaticamente os métodos toString(), equals() e hashCode() baseado no atributo 'value'
+  // Método auxiliar privado para o cálculo dos dígitos verificadores
+  private static int calcularDigito(String base, int pesoInicial) {
+    int soma = 0;
+    int peso = pesoInicial;
+    for (int i = 0; i < base.length(); i++) {
+      soma += (base.charAt(i) - '0') * peso;
+      peso--;
+    }
+    int resto = soma % 11;
+    return (resto < 2) ? 0 : (11 - resto);
+  }
 }
