@@ -1,9 +1,11 @@
 package br.com.gabrielcaio.pdv.integration.base;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+@ActiveProfiles("test")
 public abstract class BaseTestContainers {
 
   // Sem @Container
@@ -14,7 +16,8 @@ public abstract class BaseTestContainers {
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("test")
             .withUsername("test")
-            .withPassword("test");
+            .withPassword("test")
+            .withReuse(true);
     postgres.start();
     // Adiciona hook para parar quando a JVM terminar
     Runtime.getRuntime().addShutdownHook(new Thread(postgres::stop));

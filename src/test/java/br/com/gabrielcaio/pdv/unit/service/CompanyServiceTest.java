@@ -31,8 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
+@ActiveProfiles("test")
 class CompanyServiceTest {
 
   private CompanyRepository companyRepository;

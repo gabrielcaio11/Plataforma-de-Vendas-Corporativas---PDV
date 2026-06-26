@@ -13,8 +13,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
+@ActiveProfiles("test")
 class TransactionRequestTest {
 
   private Validator validator;

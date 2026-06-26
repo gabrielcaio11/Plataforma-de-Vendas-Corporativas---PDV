@@ -21,9 +21,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @Tag("integration")
+@ActiveProfiles("test")
 class TransactionRepositoryIT extends BaseRepositoryTest {
 
   @Autowired private TransactionRepository transactionRepository;
