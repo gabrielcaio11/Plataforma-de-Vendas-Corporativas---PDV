@@ -24,8 +24,10 @@ import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -264,5 +266,34 @@ class CompanyServiceTest {
     assertEquals(BigDecimal.valueOf(10.0), response.get(0).products().get(0).price());
     assertEquals("Product 2", response.get(0).products().get(1).name());
     assertEquals(BigDecimal.valueOf(20.0), response.get(0).products().get(1).price());
+  }
+
+  @Nested
+  class getById {
+
+    @Test
+    @DisplayName("shouldReturnCompanyWhenIdExists")
+    void shouldReturnCompanyWhenIdExists() {
+      Company company = new Company();
+      company.setId(1L);
+      company.setName("Acme");
+      when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+      CompanyResponse response = companyService.getById(1L);
+
+      assertEquals(1L, response.id());
+      assertEquals("Acme", response.name());
+    }
+
+    @Test
+    @DisplayName("shouldThrowNotFoundWhenCompanyDoesNotExist")
+    void shouldThrowNotFoundWhenCompanyDoesNotExist() {
+      when(companyRepository.findById(99L)).thenReturn(Optional.empty());
+
+      ResourceNotFoundException exception =
+          assertThrows(ResourceNotFoundException.class, () -> companyService.getById(99L));
+
+      assertEquals("Company not found with id: 99", exception.getMessage());
+    }
   }
 }
