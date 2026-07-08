@@ -49,31 +49,6 @@ class CompanyServiceTest {
   }
 
   @Test
-  @DisplayName("shouldReturnCompanyWhenIdExists")
-  void shouldReturnCompanyWhenIdExists() {
-    Company company = new Company();
-    company.setId(1L);
-    company.setName("Acme");
-    when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-
-    CompanyResponse response = companyService.getById(1L);
-
-    assertEquals(1L, response.id());
-    assertEquals("Acme", response.name());
-  }
-
-  @Test
-  @DisplayName("shouldThrowNotFoundWhenCompanyDoesNotExist")
-  void shouldThrowNotFoundWhenCompanyDoesNotExist() {
-    when(companyRepository.findById(99L)).thenReturn(Optional.empty());
-
-    ResourceNotFoundException exception =
-        assertThrows(ResourceNotFoundException.class, () -> companyService.getById(99L));
-
-    assertEquals("Company not found with id: 99", exception.getMessage());
-  }
-
-  @Test
   @DisplayName("shouldReturnPagedCompaniesWhenSortIsValid")
   void shouldReturnPagedCompaniesWhenSortIsValid() {
     Company company = new Company();
@@ -295,5 +270,41 @@ class CompanyServiceTest {
 
       assertEquals("Company not found with id: 99", exception.getMessage());
     }
+  }
+
+  @Nested
+  class create {
+
+    @Test
+    @DisplayName("shouldCreateCompanyWhenValidDataIsProvided")
+    void shouldCreateCompanyWhenValidDataIsProvided() {
+      CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("Acme");
+      when(companyRepository.findByName("Acme")).thenReturn(Optional.empty());
+
+      Company savedCompany = new Company();
+      savedCompany.setId(1L);
+      savedCompany.setName("Acme");
+      when(companyRepository.save(any(Company.class))).thenReturn(savedCompany);
+
+      CompanyResponse response = companyService.create(createCompanyRequest);
+    
+      assertEquals("Acme", response.name());
+    }
+
+    @Test
+    @DisplayName("shouldThrowBusinessExceptionWhenCompanyNameAlreadyExists")
+    void shouldThrowBusinessExceptionWhenCompanyNameAlreadyExists() {
+      CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("Acme");
+      Company savedCompany = new Company();
+      savedCompany.setId(1L);
+      savedCompany.setName("Acme");
+      when(companyRepository.findByName("Acme")).thenReturn(Optional.of(savedCompany));
+
+      BusinessException exception =
+          assertThrows(BusinessException.class, () -> companyService.create(createCompanyRequest));
+
+      assertEquals("Company name already exists: Acme", exception.getMessage());
+    }
+
   }
 }
