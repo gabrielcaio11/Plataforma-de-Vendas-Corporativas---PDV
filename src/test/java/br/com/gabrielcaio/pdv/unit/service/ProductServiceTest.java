@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,33 +25,26 @@ import br.com.gabrielcaio.pdv.service.ProductService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-  private ProductRepository productRepository;
-  private UserRepository userRepository;
-  private AuthorizationService authorizationService;
-  private CompanyRepository companyRepository;
-  private ProductService productService;
-
-  @BeforeEach
-  void setUp() {
-    productRepository = mock(ProductRepository.class);
-    userRepository = mock(UserRepository.class);
-    authorizationService = mock(AuthorizationService.class);
-    companyRepository = mock(CompanyRepository.class);
-    productService =
-        new ProductService(
-            productRepository, userRepository, authorizationService, companyRepository);
-  }
+  @Mock private ProductRepository productRepository;
+  @Mock private UserRepository userRepository;
+  @Mock private AuthorizationService authorizationService;
+  @Mock private CompanyRepository companyRepository;
+  @InjectMocks private ProductService productService;
 
   @Test
   @DisplayName("shouldCreateProductWhenUserBelongsToSameCompany")

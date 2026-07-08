@@ -3,7 +3,6 @@ package br.com.gabrielcaio.pdv.unit.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -22,30 +21,25 @@ import br.com.gabrielcaio.pdv.security.SecurityUtils;
 import br.com.gabrielcaio.pdv.service.TransactionService;
 import java.math.BigDecimal;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
-  private UserRepository userRepository;
-  private ProductRepository productRepository;
-  private TransactionRepository transactionRepository;
-  private TransactionService transactionService;
-
-  @BeforeEach
-  void setUp() {
-    userRepository = mock(UserRepository.class);
-    productRepository = mock(ProductRepository.class);
-    transactionRepository = mock(TransactionRepository.class);
-    transactionService =
-        new TransactionService(userRepository, productRepository, transactionRepository);
-  }
+  @Mock private UserRepository userRepository;
+  @Mock private ProductRepository productRepository;
+  @Mock private TransactionRepository transactionRepository;
+  @InjectMocks private TransactionService transactionService;
 
   @Test
   @DisplayName("shouldCreateTransactionAndCalculateTotalPrice")

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,12 +23,14 @@ import br.com.gabrielcaio.pdv.service.CompanyService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,16 +38,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class CompanyServiceTest {
 
-  private CompanyRepository companyRepository;
-  private CompanyService companyService;
+  @Mock private CompanyRepository companyRepository;
 
-  @BeforeEach
-  void setUp() {
-    companyRepository = mock(CompanyRepository.class);
-    companyService = new CompanyService(companyRepository);
-  }
+  @InjectMocks private CompanyService companyService;
 
   @Test
   @DisplayName("shouldReturnPagedCompaniesWhenSortIsValid")
@@ -287,7 +284,7 @@ class CompanyServiceTest {
       when(companyRepository.save(any(Company.class))).thenReturn(savedCompany);
 
       CompanyResponse response = companyService.create(createCompanyRequest);
-    
+
       assertEquals("Acme", response.name());
     }
 
@@ -305,6 +302,5 @@ class CompanyServiceTest {
 
       assertEquals("Company name already exists: Acme", exception.getMessage());
     }
-
   }
 }
