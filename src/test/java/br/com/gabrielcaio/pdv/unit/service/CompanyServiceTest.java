@@ -1,9 +1,9 @@
 package br.com.gabrielcaio.pdv.unit.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,6 +14,8 @@ import br.com.gabrielcaio.pdv.controller.dto.request.PageRequest;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithEmployeeResponse;
 import br.com.gabrielcaio.pdv.controller.dto.response.CompanyWithProductsResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.EmployeeResponse;
+import br.com.gabrielcaio.pdv.controller.dto.response.ProductResponse;
 import br.com.gabrielcaio.pdv.controller.exception.error.BusinessException;
 import br.com.gabrielcaio.pdv.controller.exception.error.ResourceNotFoundException;
 import br.com.gabrielcaio.pdv.domain.Company;
@@ -37,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 @Tag("unit")
@@ -64,9 +67,50 @@ class CompanyServiceTest {
 
       Page<CompanyResponse> response = companyService.getAll(request);
 
-      assertEquals(1, response.getTotalElements());
-      assertEquals("Acme", response.getContent().get(0).name());
-      verify(companyRepository).findAll(any(Pageable.class));
+      assertThat(response.getTotalElements()).isEqualTo(1);
+      assertThat(response.getContent())
+          .extracting(CompanyResponse::id, CompanyResponse::name)
+          .containsExactly(tuple(1L, "Acme"));
+      ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+      verify(companyRepository).findAll(captor.capture());
+      Pageable captured = captor.getValue();
+      assertThat(captured.getPageNumber()).isEqualTo(0);
+      assertThat(captured.getPageSize()).isEqualTo(10);
+      Sort sort = captured.getSort();
+      assertThat(sort).hasSize(1);
+      assertThat(sort.iterator().next().getProperty()).isEqualTo("name");
+      assertThat(sort.iterator().next().isAscending()).isTrue();
+    }
+
+    @Test
+    @DisplayName("shouldUseDefaultSortAndDirectionWhenNull")
+    void shouldUseDefaultSortAndDirectionWhenNull() {
+      PageRequest request = new PageRequest(0, 10, null, null);
+      when(companyRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+
+      companyService.getAll(request);
+
+      ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+      verify(companyRepository).findAll(captor.capture());
+      Pageable captured = captor.getValue();
+      Sort sort = captured.getSort();
+      assertThat(sort).hasSize(1);
+      assertThat(sort.iterator().next().getProperty()).isEqualTo("name");
+      assertThat(sort.iterator().next().isAscending()).isTrue();
+    }
+
+    @Test
+    @DisplayName("deve usar direção 'desc' quando informada")
+    void shouldUseDescDirectionWhenProvided() {
+      PageRequest request = new PageRequest(0, 10, "name", "desc");
+      when(companyRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+
+      companyService.getAll(request);
+
+      ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+      verify(companyRepository).findAll(captor.capture());
+      Sort sort = captor.getValue().getSort();
+      assertThat(sort.iterator().next().isDescending()).isTrue();
     }
 
     @Test
@@ -87,60 +131,51 @@ class CompanyServiceTest {
     @Test
     @DisplayName("shouldReturnEmptyEmployeeListWhenCompanyHasNoEmployees")
     void shouldReturnEmptyEmployeeListWhenCompanyHasNoEmployees() {
-      Company company = new Company();
-      company.setId(1L);
-      company.setName("Acme");
-      company.setUsers(List.of());
-
+      Company company = createCompany(1L, "Acme", List.of(), List.of());
       when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
-      List<CompanyWithEmployeeResponse> response = companyService.getEmployeesByCompanyId(1L);
+      List<CompanyWithEmployeeResponse> responses = companyService.getEmployeesByCompanyId(1L);
 
-      assertEquals(1, response.size());
-      assertEquals(1L, response.get(0).id());
-      assertEquals("Acme", response.get(0).nameCompany());
-      assertTrue(response.get(0).employees().isEmpty());
+      assertThat(responses)
+          .hasSize(1)
+          .first()
+          .satisfies(
+              response -> {
+                assertThat(response.id()).isEqualTo(1L);
+                assertThat(response.nameCompany()).isEqualTo("Acme");
+                assertThat(response.employees()).isEmpty();
+              });
+
+      verify(companyRepository).findById(1L);
     }
 
     @Test
     @DisplayName("shouldReturnEmployeeListWhenCompanyHasEmployees")
     void shouldReturnEmployeeListWhenCompanyHasEmployees() {
 
-      User user1 = new User();
-      user1.setId(1L);
-      user1.setName("John Doe");
-      user1.setEmail("gabriel@gmail.com");
-      user1.setPassword("password");
-      user1.setRole(UserRole.COLLABORATOR);
-
-      User user2 = new User();
-      user2.setId(2L);
-      user2.setName("Jane Smith");
-      user2.setEmail("jane@gmail.com");
-      user2.setPassword("password");
-      user2.setRole(UserRole.COLLABORATOR);
-
-      Company company = new Company();
-      company.setId(1L);
-      company.setName("Acme");
-      company.setUsers(List.of(user1, user2));
-
-      user1.setCompany(company);
-      user2.setCompany(company);
-
+      Company company = createCompany(1L, "Acme");
+      User user1 = createUser(1L, "John Doe", company);
+      User user2 = createUser(2L, "Jane Smith", company);
       company.setUsers(List.of(user1, user2));
 
       when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
-      List<CompanyWithEmployeeResponse> response = companyService.getEmployeesByCompanyId(1L);
-      assertEquals(1, response.size());
-      assertEquals(1L, response.get(0).id());
-      assertEquals("Acme", response.get(0).nameCompany());
-      assertEquals(2, response.get(0).employees().size());
-      assertEquals(1L, response.get(0).employees().get(0).id());
-      assertEquals("John Doe", response.get(0).employees().get(0).name());
-      assertEquals(2L, response.get(0).employees().get(1).id());
-      assertEquals("Jane Smith", response.get(0).employees().get(1).name());
+      List<CompanyWithEmployeeResponse> responses = companyService.getEmployeesByCompanyId(1L);
+
+      assertThat(responses)
+          .hasSize(1)
+          .first()
+          .satisfies(
+              response -> {
+                assertThat(response.id()).isEqualTo(1L);
+                assertThat(response.nameCompany()).isEqualTo("Acme");
+                assertThat(response.employees())
+                    .hasSize(2)
+                    .extracting(EmployeeResponse::id, EmployeeResponse::name)
+                    .containsExactly(tuple(1L, "John Doe"), tuple(2L, "Jane Smith"));
+              });
+
+      verify(companyRepository).findById(1L);
     }
 
     @Test
@@ -151,7 +186,8 @@ class CompanyServiceTest {
           assertThrows(
               ResourceNotFoundException.class, () -> companyService.getEmployeesByCompanyId(99L));
 
-      assertEquals("Company not found with id: 99", exception.getMessage());
+      assertThat(exception).hasMessage("Company not found with id: " + 99L);
+      verify(companyRepository).findById(99L);
     }
   }
 
@@ -167,58 +203,63 @@ class CompanyServiceTest {
           assertThrows(
               ResourceNotFoundException.class, () -> companyService.getProductsByCompanyId(99L));
 
-      assertEquals("Company not found with id: 99", exception.getMessage());
+      assertThat(exception).hasMessage("Company not found with id: " + 99L);
+      verify(companyRepository).findById(99L);
     }
 
     @Test
     @DisplayName("shouldReturnEmptyProductListWhenCompanyHasNoProducts")
     void shouldReturnEmptyProductListWhenCompanyHasNoProducts() {
-      Company company = new Company();
-      company.setId(1L);
-      company.setName("Acme");
-      company.setProducts(List.of());
-
+      Company company = createCompany(1L, "Acme", List.of(), List.of());
       when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
-      List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+      // when
+      List<CompanyWithProductsResponse> responses = companyService.getProductsByCompanyId(1L);
 
-      assertEquals(1, response.size());
-      assertEquals(1L, response.get(0).id());
-      assertEquals("Acme", response.get(0).nameCompany());
-      assertTrue(response.get(0).products().isEmpty());
+      // then
+      assertThat(responses)
+          .hasSize(1)
+          .first()
+          .satisfies(
+              response -> {
+                assertThat(response.id()).isEqualTo(1L);
+                assertThat(response.nameCompany()).isEqualTo("Acme");
+                assertThat(response.products()).isEmpty();
+              });
+
+      verify(companyRepository).findById(1L);
     }
 
     @Test
     @DisplayName("shouldReturnProductListWhenCompanyHasProducts")
     void shouldReturnProductListWhenCompanyHasProducts() {
-      Company company = new Company();
-      company.setId(1L);
-      company.setName("Acme");
-
-      Product product1 = new Product();
-      product1.setName("Product 1");
-      product1.setPrice(BigDecimal.valueOf(10.0));
-      product1.setCompany(company);
-
-      Product product2 = new Product();
-      product2.setName("Product 2");
-      product2.setPrice(BigDecimal.valueOf(20.0));
-      product2.setCompany(company);
-
+      Company company = createCompany(1L, "Acme");
+      Product product1 = createProduct("Product 1", BigDecimal.valueOf(10.0), company);
+      Product product2 = createProduct("Product 2", BigDecimal.valueOf(20.0), company);
       company.setProducts(List.of(product1, product2));
 
       when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
-      List<CompanyWithProductsResponse> response = companyService.getProductsByCompanyId(1L);
+      // when
+      List<CompanyWithProductsResponse> responses = companyService.getProductsByCompanyId(1L);
 
-      assertEquals(1, response.size());
-      assertEquals(1L, response.get(0).id());
-      assertEquals("Acme", response.get(0).nameCompany());
-      assertEquals(2, response.get(0).products().size());
-      assertEquals("Product 1", response.get(0).products().get(0).name());
-      assertEquals(BigDecimal.valueOf(10.0), response.get(0).products().get(0).price());
-      assertEquals("Product 2", response.get(0).products().get(1).name());
-      assertEquals(BigDecimal.valueOf(20.0), response.get(0).products().get(1).price());
+      // then
+      assertThat(responses)
+          .hasSize(1)
+          .first()
+          .satisfies(
+              response -> {
+                assertThat(response.id()).isEqualTo(1L);
+                assertThat(response.nameCompany()).isEqualTo("Acme");
+                assertThat(response.products())
+                    .hasSize(2)
+                    .extracting(ProductResponse::name, ProductResponse::price)
+                    .containsExactly(
+                        tuple("Product 1", BigDecimal.valueOf(10.0)),
+                        tuple("Product 2", BigDecimal.valueOf(20.0)));
+              });
+
+      verify(companyRepository).findById(1L);
     }
   }
 
@@ -235,8 +276,12 @@ class CompanyServiceTest {
 
       CompanyResponse response = companyService.getById(1L);
 
-      assertEquals(1L, response.id());
-      assertEquals("Acme", response.name());
+      assertThat(response)
+          .isNotNull()
+          .extracting(CompanyResponse::id, CompanyResponse::name)
+          .containsExactly(1L, "Acme");
+      verify(companyRepository).findById(1L);
+      verify(companyRepository, never()).findAll(any(Pageable.class));
     }
 
     @Test
@@ -247,7 +292,8 @@ class CompanyServiceTest {
       ResourceNotFoundException exception =
           assertThrows(ResourceNotFoundException.class, () -> companyService.getById(99L));
 
-      assertEquals("Company not found with id: 99", exception.getMessage());
+      assertThat(exception).hasMessage("Company not found with id: " + 99L);
+      verify(companyRepository).findById(99L);
     }
   }
 
@@ -297,5 +343,38 @@ class CompanyServiceTest {
       verify(companyRepository).findByName("Acme");
       verify(companyRepository, never()).save(any(Company.class));
     }
+  }
+
+  private Company createCompany(Long id, String name) {
+    Company company = new Company();
+    company.setId(id);
+    company.setName(name);
+    return company;
+  }
+
+  private Company createCompany(Long id, String name, List<User> users, List<Product> products) {
+    Company company = createCompany(id, name);
+    company.setUsers(users != null ? users : List.of());
+    company.setProducts(products != null ? products : List.of());
+    return company;
+  }
+
+  private User createUser(Long id, String name, Company company) {
+    User user = new User();
+    user.setId(id);
+    user.setName(name);
+    user.setEmail(name.toLowerCase().replace(" ", "") + "@example.com");
+    user.setPassword("password");
+    user.setRole(UserRole.COLLABORATOR);
+    user.setCompany(company);
+    return user;
+  }
+
+  private Product createProduct(String name, BigDecimal price, Company company) {
+    Product product = new Product();
+    product.setName(name);
+    product.setPrice(price);
+    product.setCompany(company);
+    return product;
   }
 }
